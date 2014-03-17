@@ -19,17 +19,14 @@ package com.android.inputmethod.keyboard;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.ContextThemeWrapper;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
 import com.android.inputmethod.keyboard.KeyboardLayoutSet.KeyboardLayoutSetException;
 import com.android.inputmethod.keyboard.internal.KeyboardState;
 import com.android.inputmethod.latin.InputView;
-import com.android.inputmethod.latin.LatinIME;
 import com.android.inputmethod.latin.LatinImeLogger;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.RichInputMethodManager;
@@ -68,7 +65,6 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
     private View mMainKeyboardFrame;
     private MainKeyboardView mKeyboardView;
     private EmojiPalettesView mEmojiPalettesView;
-    private LatinIME mLatinIME;
     private Resources mResources;
 
     private KeyboardState mState;
@@ -90,20 +86,6 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
 
     private KeyboardSwitcher() {
         // Intentional empty constructor for singleton.
-    }
-
-    public static void init(final LatinIME latinIme) {
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(latinIme);
-        sInstance.initInternal(latinIme, prefs);
-    }
-
-    private void initInternal(final LatinIME latinIme, final SharedPreferences prefs) {
-        mLatinIME = latinIme;
-        mResources = latinIme.getResources();
-        mPrefs = prefs;
-        mSubtypeSwitcher = SubtypeSwitcher.getInstance();
-        mState = new KeyboardState(this);
-        setContextThemeWrapper(latinIme, getKeyboardTheme(latinIme, prefs));
     }
 
     private static KeyboardTheme getKeyboardTheme(final Context context,
@@ -198,8 +180,9 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
      * Update keyboard shift state triggered by connected EditText status change.
      */
     public void updateShiftState() {
-        mState.onUpdateShiftState(mLatinIME.getCurrentAutoCapsState(),
-                mLatinIME.getCurrentRecapitalizeState());
+    	//<changed_latinIME>
+//        mState.onUpdateShiftState(mLatinIME.getCurrentAutoCapsState(),
+//                mLatinIME.getCurrentRecapitalizeState());
     }
 
     // TODO: Remove this method. Come up with a more comprehensive way to reset the keyboard layout
@@ -209,7 +192,8 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
     }
 
     public void onPressKey(final int code, final boolean isSinglePointer) {
-        mState.onPressKey(code, isSinglePointer, mLatinIME.getCurrentAutoCapsState());
+    	//<changed_latinIME>
+//        mState.onPressKey(code, isSinglePointer, mLatinIME.getCurrentAutoCapsState());
     }
 
     public void onReleaseKey(final int code, final boolean withSliding) {
@@ -279,8 +263,9 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
     // Implements {@link KeyboardState.SwitchActions}.
     @Override
     public void requestUpdatingShiftState() {
-        mState.onUpdateShiftState(mLatinIME.getCurrentAutoCapsState(),
-                mLatinIME.getCurrentRecapitalizeState());
+    	//<changed_latinIME>
+//        mState.onUpdateShiftState(mLatinIME.getCurrentAutoCapsState(),
+//                mLatinIME.getCurrentRecapitalizeState());
     }
 
     // Implements {@link KeyboardState.SwitchActions}.
@@ -312,7 +297,8 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
      * Updates state machine to figure out when to automatically switch back to the previous mode.
      */
     public void onCodeInput(final int code) {
-        mState.onCodeInput(code, mLatinIME.getCurrentAutoCapsState());
+    	//<changed_latinIME>
+//        mState.onCodeInput(code, mLatinIME.getCurrentAutoCapsState());
     }
 
     private boolean isShowingMainKeyboard() {
@@ -360,19 +346,20 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
             mKeyboardView.closing();
         }
 
-        setContextThemeWrapper(mLatinIME, mKeyboardTheme);
-        mCurrentInputView = (InputView)LayoutInflater.from(mThemeContext).inflate(
-                R.layout.input_view, null);
-        mMainKeyboardFrame = mCurrentInputView.findViewById(R.id.main_keyboard_frame);
-        mEmojiPalettesView = (EmojiPalettesView)mCurrentInputView.findViewById(
-                R.id.emoji_keyboard_view);
-
-        mKeyboardView = (MainKeyboardView) mCurrentInputView.findViewById(R.id.keyboard_view);
-        mKeyboardView.setHardwareAcceleratedDrawingEnabled(isHardwareAcceleratedDrawingEnabled);
-        mKeyboardView.setKeyboardActionListener(mLatinIME);
-        mEmojiPalettesView.setHardwareAcceleratedDrawingEnabled(
-                isHardwareAcceleratedDrawingEnabled);
-        mEmojiPalettesView.setKeyboardActionListener(mLatinIME);
+        //<changed_latinIME>
+//        setContextThemeWrapper(mLatinIME, mKeyboardTheme);
+//        mCurrentInputView = (InputView)LayoutInflater.from(mThemeContext).inflate(
+//                R.layout.input_view, null);
+//        mMainKeyboardFrame = mCurrentInputView.findViewById(R.id.main_keyboard_frame);
+//        mEmojiPalettesView = (EmojiPalettesView)mCurrentInputView.findViewById(
+//                R.id.emoji_keyboard_view);
+//
+//        mKeyboardView = (MainKeyboardView) mCurrentInputView.findViewById(R.id.keyboard_view);
+//        mKeyboardView.setHardwareAcceleratedDrawingEnabled(isHardwareAcceleratedDrawingEnabled);
+//        mKeyboardView.setKeyboardActionListener(mLatinIME);
+//        mEmojiPalettesView.setHardwareAcceleratedDrawingEnabled(
+//                isHardwareAcceleratedDrawingEnabled);
+//        mEmojiPalettesView.setKeyboardActionListener(mLatinIME);
 
         // This always needs to be set since the accessibility state can
         // potentially change without the input view being re-created.

@@ -20,6 +20,12 @@ import static com.android.inputmethod.latin.Constants.ImeOption.FORCE_ASCII;
 import static com.android.inputmethod.latin.Constants.ImeOption.NO_MICROPHONE;
 import static com.android.inputmethod.latin.Constants.ImeOption.NO_MICROPHONE_COMPAT;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Locale;
+import java.util.TreeSet;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -60,8 +66,6 @@ import android.view.inputmethod.CorrectionInfo;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodSubtype;
 
-import com.android.inputmethod.accessibility.AccessibilityUtils;
-import com.android.inputmethod.accessibility.AccessibleKeyboardViewProxy;
 import com.android.inputmethod.annotations.UsedForTesting;
 import com.android.inputmethod.compat.AppWorkaroundsUtils;
 import com.android.inputmethod.compat.InputMethodServiceCompatUtils;
@@ -103,13 +107,6 @@ import com.android.inputmethod.latin.utils.StringUtils;
 import com.android.inputmethod.latin.utils.TargetPackageInfoGetterTask;
 import com.android.inputmethod.latin.utils.TextRange;
 import com.android.inputmethod.latin.utils.UserHistoryForgettingCurveUtils;
-import com.android.inputmethod.research.ResearchLogger;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.TreeSet;
 
 /**
  * Input method implementation for Qwerty'ish keyboard.
@@ -535,7 +532,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         SubtypeSwitcher.init(this);
         KeyboardSwitcher.init(this);
         AudioAndHapticFeedbackManager.init(this);
-        AccessibilityUtils.init(this);
+        //<changed_accessibility>
+//        AccessibilityUtils.init(this);
         PersonalizationDictionarySessionRegister.init(this);
 
         super.onCreate();
@@ -548,7 +546,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         initSuggest();
 
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.getInstance().init(this, mKeyboardSwitcher, mSuggest);
+        	//<changed>
+//            ResearchLogger.getInstance().init(this, mKeyboardSwitcher, mSuggest);
         }
         mDisplayOrientation = getResources().getConfiguration().orientation;
 
@@ -634,7 +633,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
         mIsMainDictionaryAvailable = DictionaryFactory.isDictionaryAvailable(this, subtypeLocale);
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.getInstance().initSuggest(newSuggest);
+        	//<changed>
+//            ResearchLogger.getInstance().initSuggest(newSuggest);
         }
 
         mUserDictionary = new UserBinaryDictionary(this, localeStr);
@@ -718,7 +718,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mSettings.onDestroy();
         unregisterReceiver(mReceiver);
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.getInstance().onDestroy();
+        	//<changed>
+//            ResearchLogger.getInstance().onDestroy();
         }
         unregisterReceiver(mDictionaryPackInstallReceiver);
         PersonalizationDictionarySessionRegister.onDestroy(this);
@@ -836,7 +837,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
             final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-            ResearchLogger.latinIME_onStartInputViewInternal(editorInfo, prefs);
+          //<changed>
+//            ResearchLogger.latinIME_onStartInputViewInternal(editorInfo, prefs);
         }
         if (InputAttributes.inPrivateImeOptions(null, NO_MICROPHONE_COMPAT, editorInfo)) {
             Log.w(TAG, "Deprecated private IME option specified: "
@@ -864,10 +866,11 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         }
 
         // Forward this event to the accessibility utilities, if enabled.
-        final AccessibilityUtils accessUtils = AccessibilityUtils.getInstance();
-        if (accessUtils.isTouchExplorationEnabled()) {
-            accessUtils.onStartInputViewInternal(mainKeyboardView, editorInfo, restarting);
-        }
+        //<changed_accessibility>
+//        final AccessibilityUtils accessUtils = AccessibilityUtils.getInstance();
+//        if (accessUtils.isTouchExplorationEnabled()) {
+//            accessUtils.onStartInputViewInternal(mainKeyboardView, editorInfo, restarting);
+//        }
 
         final boolean inputTypeChanged = !currentSettingsValues.isSameInputType(editorInfo);
         final boolean isDifferentTextField = !restarting || inputTypeChanged;
@@ -1059,8 +1062,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         resetComposingState(true /* alsoResetLastComposedWord */);
         // Notify ResearchLogger
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_onFinishInputViewInternal(finishingInput, mLastSelectionStart,
-                    mLastSelectionEnd, getCurrentInputConnection());
+        	//<changed>
+//            ResearchLogger.latinIME_onFinishInputViewInternal(finishingInput, mLastSelectionStart,
+//                    mLastSelectionEnd, getCurrentInputConnection());
         }
     }
 
@@ -1081,16 +1085,17 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                     + ", ce=" + composingSpanEnd);
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            final boolean expectingUpdateSelectionFromLogger =
-                    ResearchLogger.getAndClearLatinIMEExpectingUpdateSelection();
-            ResearchLogger.latinIME_onUpdateSelection(mLastSelectionStart, mLastSelectionEnd,
-                    oldSelStart, oldSelEnd, newSelStart, newSelEnd, composingSpanStart,
-                    composingSpanEnd, mExpectingUpdateSelection,
-                    expectingUpdateSelectionFromLogger, mConnection);
-            if (expectingUpdateSelectionFromLogger) {
-                // TODO: Investigate. Quitting now sounds wrong - we won't do the resetting work
-                return;
-            }
+        	//<changed>
+//            final boolean expectingUpdateSelectionFromLogger =
+//                    ResearchLogger.getAndClearLatinIMEExpectingUpdateSelection();
+//            ResearchLogger.latinIME_onUpdateSelection(mLastSelectionStart, mLastSelectionEnd,
+//                    oldSelStart, oldSelEnd, newSelStart, newSelEnd, composingSpanStart,
+//                    composingSpanEnd, mExpectingUpdateSelection,
+//                    expectingUpdateSelectionFromLogger, mConnection);
+//            if (expectingUpdateSelectionFromLogger) {
+//                // TODO: Investigate. Quitting now sounds wrong - we won't do the resetting work
+//                return;
+//            }
         }
 
         final boolean selectionChanged = mLastSelectionStart != newSelStart
@@ -1205,9 +1210,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         LatinImeLogger.commit();
         mKeyboardSwitcher.onHideWindow();
 
-        if (AccessibilityUtils.getInstance().isAccessibilityEnabled()) {
-            AccessibleKeyboardViewProxy.getInstance().onHideWindow();
-        }
+        //<changed_accessibility>
+//        if (AccessibilityUtils.getInstance().isAccessibilityEnabled()) {
+//            AccessibleKeyboardViewProxy.getInstance().onHideWindow();
+//        }
 
         if (TRACE) Debug.stopMethodTracing();
         if (mOptionsDialog != null && mOptionsDialog.isShowing()) {
@@ -1231,7 +1237,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         if (applicationSpecifiedCompletions == null) {
             clearSuggestionStrip();
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.latinIME_onDisplayCompletions(null);
+            	//<changed>
+//                ResearchLogger.latinIME_onDisplayCompletions(null);
             }
             return;
         }
@@ -1254,7 +1261,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         setAutoCorrectionIndicator(isAutoCorrection);
         setSuggestionStripShown(true);
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_onDisplayCompletions(applicationSpecifiedCompletions);
+        	//<changed>
+//            ResearchLogger.latinIME_onDisplayCompletions(applicationSpecifiedCompletions);
         }
     }
 
@@ -1397,7 +1405,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         final String typedWord = mWordComposer.getTypedWord();
         if (typedWord.length() > 0) {
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.getInstance().onWordFinished(typedWord, mWordComposer.isBatchMode());
+            	//<changed>
+//                ResearchLogger.getInstance().onWordFinished(typedWord, mWordComposer.isBatchMode());
             }
             commitChosenWord(typedWord, LastComposedWord.COMMIT_TYPE_USER_TYPED_WORD,
                     separatorString);
@@ -1449,7 +1458,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             final String text = lastTwo.charAt(1) + " ";
             mConnection.commitText(text, 1);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.latinIME_swapSwapperAndSpace(lastTwo, text);
+            	//<changed>
+//                ResearchLogger.latinIME_swapSwapperAndSpace(lastTwo, text);
             }
             mKeyboardSwitcher.updateShiftState();
         }
@@ -1482,8 +1492,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                     0, 2);
             mConnection.commitText(textToInsert, 1);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.latinIME_maybeDoubleSpacePeriod(textToInsert,
-                        false /* isBatchMode */);
+            	//<changed>
+//                ResearchLogger.latinIME_maybeDoubleSpacePeriod(textToInsert,
+//                        false /* isBatchMode */);
             }
             mKeyboardSwitcher.updateShiftState();
             return true;
@@ -1571,7 +1582,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     private void sendKeyCodePoint(final int code) {
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_sendKeyCodePoint(code);
+        	//<changed>
+//            ResearchLogger.latinIME_sendKeyCodePoint(code);
         }
         // TODO: Remove this special handling of digit letters.
         // For backward compatibility. See {@link InputMethodService#sendKeyChar(char)}.
@@ -1595,7 +1607,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     @Override
     public void onCodeInput(final int primaryCode, final int x, final int y) {
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_onCodeInput(primaryCode, x, y);
+        	//<changed>
+//            ResearchLogger.latinIME_onCodeInput(primaryCode, x, y);
         }
         final long when = SystemClock.uptimeMillis();
         if (primaryCode != Constants.CODE_DELETE || when > mLastKeyTime + QUICK_PRESS) {
@@ -1753,18 +1766,21 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             resetComposingState(true /* alsoResetLastComposedWord */);
         }
         mHandler.postUpdateSuggestionStrip();
-        if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS
-                && ResearchLogger.RESEARCH_KEY_OUTPUT_TEXT.equals(rawText)) {
-            ResearchLogger.getInstance().onResearchKeySelected(this);
-            return;
-        }
+        
+        //<changed>
+//        if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS
+//                && ResearchLogger.RESEARCH_KEY_OUTPUT_TEXT.equals(rawText)) {
+//            ResearchLogger.getInstance().onResearchKeySelected(this);
+//            return;
+//        }
         final String text = specificTldProcessingOnTextInput(rawText);
         if (SPACE_STATE_PHANTOM == mSpaceState) {
             promotePhantomSpace();
         }
         mConnection.commitText(text, 1);
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_onTextInput(text, false /* isBatchMode */);
+        	//<changed>
+//            ResearchLogger.latinIME_onTextInput(text, false /* isBatchMode */);
         }
         mConnection.endBatchEdit();
         // Space state must be updated before calling updateShiftState
@@ -2022,7 +2038,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mExpectingUpdateSelection = true;
         mConnection.endBatchEdit();
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_onEndBatchInput(batchInputText, 0, suggestedWords);
+        	//<changed>
+//            ResearchLogger.latinIME_onEndBatchInput(batchInputText, 0, suggestedWords);
         }
         // Space state must be updated before calling updateShiftState
         mSpaceState = SPACE_STATE_PHANTOM;
@@ -2092,7 +2109,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             if (mWordComposer.isBatchMode()) {
                 if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
                     final String word = mWordComposer.getTypedWord();
-                    ResearchLogger.latinIME_handleBackspace_batch(word, 1);
+                  //<changed>
+//                    ResearchLogger.latinIME_handleBackspace_batch(word, 1);
                 }
                 final String rejectedSuggestion = mWordComposer.getTypedWord();
                 mWordComposer.reset();
@@ -2122,7 +2140,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                 // like the smiley key or the .com key.
                 mConnection.deleteSurroundingText(mEnteredText.length(), 0);
                 if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                    ResearchLogger.latinIME_handleBackspace_cancelTextInput(mEnteredText);
+                	//<changed>
+//                    ResearchLogger.latinIME_handleBackspace_cancelTextInput(mEnteredText);
                 }
                 mEnteredText = null;
                 // If we have mEnteredText, then we know that mHasUncommittedTypedChars == false.
@@ -2157,8 +2176,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                 mLastSelectionEnd = mLastSelectionStart;
                 mConnection.deleteSurroundingText(numCharsDeleted, 0);
                 if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                    ResearchLogger.latinIME_handleBackspace(numCharsDeleted,
-                            false /* shouldUncommitLogUnit */);
+                	//<changed>
+//                    ResearchLogger.latinIME_handleBackspace(numCharsDeleted,
+//                            false /* shouldUncommitLogUnit */);
                 }
             } else {
                 // There is no selection, just delete one character.
@@ -2190,8 +2210,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                     mConnection.deleteSurroundingText(lengthToDelete, 0);
                 }
                 if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                    ResearchLogger.latinIME_handleBackspace(lengthToDelete,
-                            true /* shouldUncommitLogUnit */);
+                	//<changed>
+//                    ResearchLogger.latinIME_handleBackspace(lengthToDelete,
+//                            true /* shouldUncommitLogUnit */);
                 }
                 if (mDeleteCount > DELETE_ACCELERATE_AT) {
                     final int codePointBeforeCursorToDeleteAgain =
@@ -2201,8 +2222,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                                 codePointBeforeCursorToDeleteAgain) ? 2 : 1;
                         mConnection.deleteSurroundingText(lengthToDeleteAgain, 0);
                         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                            ResearchLogger.latinIME_handleBackspace(lengthToDeleteAgain,
-                                    true /* shouldUncommitLogUnit */);
+                        	//<changed>
+//                            ResearchLogger.latinIME_handleBackspace(lengthToDeleteAgain,
+//                                    true /* shouldUncommitLogUnit */);
                         }
                     }
                 }
@@ -2389,7 +2411,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             promotePhantomSpace();
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_handleSeparator(primaryCode, mWordComposer.isComposingWord());
+        	//<changed>
+//            ResearchLogger.latinIME_handleSeparator(primaryCode, mWordComposer.isComposingWord());
         }
 
         if (!shouldAvoidSendingCode) {
@@ -2635,7 +2658,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             final String typedWord) {
       if (suggestedWords.isEmpty()) {
           // No auto-correction is available, clear the cached values.
-          AccessibilityUtils.getInstance().setAutoCorrection(null, null);
+    	  //<changed_accessibility>
+//          AccessibilityUtils.getInstance().setAutoCorrection(null, null);
           clearSuggestionStrip();
           return;
       }
@@ -2646,7 +2670,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
       setSuggestionStripShown(isSuggestionsStripVisible());
       // An auto-correction is available, cache it in accessibility code so
       // we can be speak it if the user touches a key that will insert it.
-      AccessibilityUtils.getInstance().setAutoCorrection(suggestedWords, typedWord);
+      //<changed_accessibility>
+//      AccessibilityUtils.getInstance().setAutoCorrection(suggestedWords, typedWord);
     }
 
     private void showSuggestionStrip(final SuggestedWords suggestedWords) {
@@ -2678,8 +2703,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             }
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
                 final SuggestedWords suggestedWords = mSuggestedWords;
-                ResearchLogger.latinIme_commitCurrentAutoCorrection(typedWord, autoCorrection,
-                        separator, mWordComposer.isBatchMode(), suggestedWords);
+              //<changed>
+//                ResearchLogger.latinIme_commitCurrentAutoCorrection(typedWord, autoCorrection,
+//                        separator, mWordComposer.isBatchMode(), suggestedWords);
             }
             mExpectingUpdateSelection = true;
             commitChosenWord(autoCorrection, LastComposedWord.COMMIT_TYPE_DECIDED_WORD,
@@ -2714,8 +2740,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             onCodeInput(primaryCode,
                     Constants.SUGGESTION_STRIP_COORDINATE, Constants.SUGGESTION_STRIP_COORDINATE);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.latinIME_punctuationSuggestion(index, suggestion,
-                        false /* isBatchMode */, suggestedWords.mIsPrediction);
+            	//<changed>
+//                ResearchLogger.latinIME_punctuationSuggestion(index, suggestion,
+//                        false /* isBatchMode */, suggestedWords.mIsPrediction);
             }
             return;
         }
@@ -2756,9 +2783,10 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         commitChosenWord(suggestion, LastComposedWord.COMMIT_TYPE_MANUAL_PICK,
                 LastComposedWord.NOT_A_SEPARATOR);
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_pickSuggestionManually(replacedWord, index, suggestion,
-                    mWordComposer.isBatchMode(), suggestionInfo.mScore, suggestionInfo.mKind,
-                    suggestionInfo.mSourceDict.mDictType);
+        	//<changed>
+//            ResearchLogger.latinIME_pickSuggestionManually(replacedWord, index, suggestion,
+//                    mWordComposer.isBatchMode(), suggestionInfo.mScore, suggestionInfo.mKind,
+//                    suggestionInfo.mSourceDict.mDictType);
         }
         mConnection.endBatchEdit();
         // Don't allow cancellation of manual pick
@@ -2974,8 +3002,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
             // TODO: Handle the case where the user manually moves the cursor and then backs up over
             // a separator.  In that case, the current log unit should not be uncommitted.
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.getInstance().uncommitCurrentLogUnit(wordString,
-                        true /* dumpCurrentLogUnit */);
+            	//<changed>
+//                ResearchLogger.getInstance().uncommitCurrentLogUnit(wordString,
+//                        true /* dumpCurrentLogUnit */);
             }
         }
     }
@@ -3055,8 +3084,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                     Constants.NOT_A_COORDINATE, Constants.NOT_A_COORDINATE);
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.latinIME_revertCommit(committedWord, originallyTypedWord,
-                    mWordComposer.isBatchMode(), mLastComposedWord.mSeparatorString);
+        	//<changed>
+//            ResearchLogger.latinIME_revertCommit(committedWord, originallyTypedWord,
+//                    mWordComposer.isBatchMode(), mLastComposedWord.mSeparatorString);
         }
         // Don't restart suggestion yet. We'll restart if the user deletes the
         // separator.
@@ -3072,7 +3102,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
                 && currentSettings.mCurrentLanguageHasSpaces
                 && !mConnection.textBeforeCursorLooksLikeURL()) {
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.latinIME_promotePhantomSpace();
+            	//<changed>
+//                ResearchLogger.latinIME_promotePhantomSpace();
             }
             sendKeyCodePoint(Constants.CODE_SPACE);
         }
@@ -3137,16 +3168,17 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mKeyboardSwitcher.onReleaseKey(primaryCode, withSliding);
 
         // If accessibility is on, ensure the user receives keyboard state updates.
-        if (AccessibilityUtils.getInstance().isTouchExplorationEnabled()) {
-            switch (primaryCode) {
-            case Constants.CODE_SHIFT:
-                AccessibleKeyboardViewProxy.getInstance().notifyShiftState();
-                break;
-            case Constants.CODE_SWITCH_ALPHA_SYMBOL:
-                AccessibleKeyboardViewProxy.getInstance().notifySymbolsState();
-                break;
-            }
-        }
+        //<changed_accessibility>
+//        if (AccessibilityUtils.getInstance().isTouchExplorationEnabled()) {
+//            switch (primaryCode) {
+//            case Constants.CODE_SHIFT:
+//                AccessibleKeyboardViewProxy.getInstance().notifyShiftState();
+//                break;
+//            case Constants.CODE_SWITCH_ALPHA_SYMBOL:
+//                AccessibleKeyboardViewProxy.getInstance().notifySymbolsState();
+//                break;
+//            }
+//        }
     }
 
     // Hooks for hardware keyboard

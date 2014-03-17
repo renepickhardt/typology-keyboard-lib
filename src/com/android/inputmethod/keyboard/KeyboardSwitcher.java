@@ -26,7 +26,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 
-import com.android.inputmethod.accessibility.AccessibleKeyboardViewProxy;
 import com.android.inputmethod.keyboard.KeyboardLayoutSet.KeyboardLayoutSetException;
 import com.android.inputmethod.keyboard.internal.KeyboardState;
 import com.android.inputmethod.latin.InputView;
@@ -377,7 +376,8 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
 
         // This always needs to be set since the accessibility state can
         // potentially change without the input view being re-created.
-        AccessibleKeyboardViewProxy.getInstance().setView(mKeyboardView);
+        //<changed_accessibility>
+//        AccessibleKeyboardViewProxy.getInstance().setView(mKeyboardView);
 
         return mCurrentInputView;
     }

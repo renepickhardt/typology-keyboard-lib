@@ -16,6 +16,8 @@
 
 package com.android.inputmethod.keyboard;
 
+import java.util.ArrayList;
+
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.os.SystemClock;
@@ -23,7 +25,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 
-import com.android.inputmethod.accessibility.AccessibilityUtils;
 import com.android.inputmethod.keyboard.internal.GestureStroke;
 import com.android.inputmethod.keyboard.internal.GestureStroke.GestureStrokeParams;
 import com.android.inputmethod.keyboard.internal.GestureStrokeWithPreviewPoints;
@@ -38,9 +39,6 @@ import com.android.inputmethod.latin.settings.Settings;
 import com.android.inputmethod.latin.utils.CollectionUtils;
 import com.android.inputmethod.latin.utils.CoordinateUtils;
 import com.android.inputmethod.latin.utils.ResourceUtils;
-import com.android.inputmethod.research.ResearchLogger;
-
-import java.util.ArrayList;
 
 public final class PointerTracker implements PointerTrackerQueue.Element {
     private static final String TAG = PointerTracker.class.getSimpleName();
@@ -398,8 +396,9 @@ public final class PointerTracker implements PointerTrackerQueue.Element {
     private static void updateGestureHandlingMode() {
         sShouldHandleGesture = sMainDictionaryAvailable
                 && sGestureHandlingEnabledByInputField
-                && sGestureHandlingEnabledByUser
-                && !AccessibilityUtils.getInstance().isTouchExplorationEnabled();
+                && sGestureHandlingEnabledByUser;
+                //<changed_accessibility>
+//                && !AccessibilityUtils.getInstance().isTouchExplorationEnabled();
     }
 
     // Note that this method is called from a non-UI thread.
@@ -536,8 +535,9 @@ public final class PointerTracker implements PointerTrackerQueue.Element {
                     altersCode ? " altersCode" : "", key.isEnabled() ? "" : " disabled"));
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.pointerTracker_callListenerOnCodeInput(key, x, y, ignoreModifierKey,
-                    altersCode, code);
+        	//<changed>
+//            ResearchLogger.pointerTracker_callListenerOnCodeInput(key, x, y, ignoreModifierKey,
+//                    altersCode, code);
         }
         if (ignoreModifierKey) {
             return;
@@ -569,8 +569,9 @@ public final class PointerTracker implements PointerTrackerQueue.Element {
                     key.isEnabled() ?  "": " disabled"));
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.pointerTracker_callListenerOnRelease(key, primaryCode, withSliding,
-                    ignoreModifierKey);
+        	//<changed>
+//            ResearchLogger.pointerTracker_callListenerOnRelease(key, primaryCode, withSliding,
+//                    ignoreModifierKey);
         }
         if (ignoreModifierKey) {
             return;
@@ -592,7 +593,8 @@ public final class PointerTracker implements PointerTrackerQueue.Element {
             Log.d(TAG, String.format("[%d] onCancelInput", mPointerId));
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.pointerTracker_callListenerOnCancelInput();
+        	//<changed>
+//            ResearchLogger.pointerTracker_callListenerOnCancelInput();
         }
         mListener.onCancelInput();
     }
@@ -922,7 +924,8 @@ public final class PointerTracker implements PointerTrackerQueue.Element {
                             + " ignore potential noise: time=%d distance=%d",
                             mPointerId, deltaT, distance));
                 if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                    ResearchLogger.pointerTracker_onDownEvent(deltaT, distance * distance);
+                	//<changed>
+//                    ResearchLogger.pointerTracker_onDownEvent(deltaT, distance * distance);
                 }
                 cancelTrackingForAction();
                 return;
@@ -1085,7 +1088,8 @@ public final class PointerTracker implements PointerTrackerQueue.Element {
         }
         // TODO: This should be moved to outside of this nested if-clause?
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.pointerTracker_onMoveEvent(x, y, lastX, lastY);
+        	//<changed>
+//            ResearchLogger.pointerTracker_onMoveEvent(x, y, lastX, lastY);
         }
         onUpEventInternal(x, y, eventTime);
         onDownEventInternal(x, y, eventTime);

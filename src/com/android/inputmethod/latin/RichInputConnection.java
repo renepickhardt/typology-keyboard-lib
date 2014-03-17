@@ -16,6 +16,8 @@
 
 package com.android.inputmethod.latin;
 
+import java.util.regex.Pattern;
+
 import android.inputmethodservice.InputMethodService;
 import android.text.TextUtils;
 import android.util.Log;
@@ -33,10 +35,6 @@ import com.android.inputmethod.latin.utils.DebugLogUtils;
 import com.android.inputmethod.latin.utils.SpannableStringUtils;
 import com.android.inputmethod.latin.utils.StringUtils;
 import com.android.inputmethod.latin.utils.TextRange;
-import com.android.inputmethod.research.ResearchLogger;
-
-import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * Enrichment class for InputConnection to simplify interaction and add functionality.
@@ -187,7 +185,8 @@ public final class RichInputConnection {
         if (null != mIC && shouldFinishComposition) {
             mIC.finishComposingText();
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_finishComposingText();
+                //<changed>
+                //ResearchLogger.richInputConnection_finishComposingText();
             }
         }
         return true;
@@ -209,7 +208,8 @@ public final class RichInputConnection {
         if (null != mIC) {
             mIC.finishComposingText();
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_finishComposingText();
+                //<changed>
+                //ResearchLogger.richInputConnection_finishComposingText();
             }
         }
     }
@@ -340,7 +340,8 @@ public final class RichInputConnection {
         if (null != mIC) {
             mIC.deleteSurroundingText(beforeLength, afterLength);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_deleteSurroundingText(beforeLength, afterLength);
+                //<changed>
+                //ResearchLogger.richInputConnection_deleteSurroundingText(beforeLength, afterLength);
             }
         }
         if (DEBUG_PREVIOUS_TEXT) checkConsistencyForDebug();
@@ -351,7 +352,8 @@ public final class RichInputConnection {
         if (null != mIC) {
             mIC.performEditorAction(actionId);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_performEditorAction(actionId);
+                //<changed>
+                //ResearchLogger.richInputConnection_performEditorAction(actionId);
             }
         }
     }
@@ -399,7 +401,8 @@ public final class RichInputConnection {
         if (null != mIC) {
             mIC.sendKeyEvent(keyEvent);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_sendKeyEvent(keyEvent);
+                //<changed>
+                //ResearchLogger.richInputConnection_sendKeyEvent(keyEvent);
             }
         }
     }
@@ -433,7 +436,8 @@ public final class RichInputConnection {
         if (null != mIC) {
             mIC.setComposingText(text, newCursorPosition);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_setComposingText(text, newCursorPosition);
+                //<changed>
+                //ResearchLogger.richInputConnection_setComposingText(text, newCursorPosition);
             }
         }
         if (DEBUG_PREVIOUS_TEXT) checkConsistencyForDebug();
@@ -445,7 +449,8 @@ public final class RichInputConnection {
         if (null != mIC) {
             mIC.setSelection(start, end);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_setSelection(start, end);
+                //<changed>
+                //ResearchLogger.richInputConnection_setSelection(start, end);
             }
         }
         mExpectedCursorPosition = start;
@@ -477,7 +482,8 @@ public final class RichInputConnection {
         if (null != mIC) {
             mIC.commitCompletion(completionInfo);
             if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-                ResearchLogger.richInputConnection_commitCompletion(completionInfo);
+                //<changed>
+                //ResearchLogger.richInputConnection_commitCompletion(completionInfo);
             }
         }
         if (DEBUG_PREVIOUS_TEXT) checkConsistencyForDebug();
@@ -710,7 +716,8 @@ public final class RichInputConnection {
         final String singleSpace = " ";
         commitText(singleSpace, 1);
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.richInputConnection_revertDoubleSpacePeriod();
+        	//<changed>
+//            ResearchLogger.richInputConnection_revertDoubleSpacePeriod();
         }
         return true;
     }
@@ -735,7 +742,8 @@ public final class RichInputConnection {
         final String text = " " + textBeforeCursor.subSequence(0, 1);
         commitText(text, 1);
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.richInputConnection_revertSwapPunctuation();
+        	//<changed>
+//            ResearchLogger.richInputConnection_revertSwapPunctuation();
         }
         return true;
     }

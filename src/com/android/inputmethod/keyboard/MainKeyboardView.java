@@ -16,6 +16,8 @@
 
 package com.android.inputmethod.keyboard;
 
+import java.util.WeakHashMap;
+
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.content.Context;
@@ -44,8 +46,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodSubtype;
 import android.widget.TextView;
 
-import com.android.inputmethod.accessibility.AccessibilityUtils;
-import com.android.inputmethod.accessibility.AccessibleKeyboardViewProxy;
 import com.android.inputmethod.annotations.ExternallyReferenced;
 import com.android.inputmethod.keyboard.PointerTracker.DrawingProxy;
 import com.android.inputmethod.keyboard.PointerTracker.TimerProxy;
@@ -69,9 +69,6 @@ import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
 import com.android.inputmethod.latin.utils.TypefaceUtils;
 import com.android.inputmethod.latin.utils.UsabilityStudyLogUtils;
 import com.android.inputmethod.latin.utils.ViewLayoutUtils;
-import com.android.inputmethod.research.ResearchLogger;
-
-import java.util.WeakHashMap;
 
 /**
  * A view that is responsible for detecting key presses and touch movements.
@@ -621,12 +618,14 @@ public final class MainKeyboardView extends KeyboardView implements PointerTrack
         mSpacebarTextSize = keyHeight * mSpacebarTextRatio;
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
             final int orientation = getContext().getResources().getConfiguration().orientation;
-            ResearchLogger.mainKeyboardView_setKeyboard(keyboard, orientation);
+          //<changed>
+//            ResearchLogger.mainKeyboardView_setKeyboard(keyboard, orientation);
         }
 
         // This always needs to be set since the accessibility state can
         // potentially change without the keyboard being set again.
-        AccessibleKeyboardViewProxy.getInstance().setKeyboard();
+      //<changed_accessibility>
+//        AccessibleKeyboardViewProxy.getInstance().setKeyboard();
     }
 
     /**
@@ -887,7 +886,8 @@ public final class MainKeyboardView extends KeyboardView implements PointerTrack
         // been attached.  This is needed to properly show the splash screen, which requires that
         // the window token of the KeyboardView be non-null.
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.getInstance().mainKeyboardView_onAttachedToWindow(this);
+        	//<changed>
+//            ResearchLogger.getInstance().mainKeyboardView_onAttachedToWindow(this);
         }
     }
 
@@ -899,7 +899,8 @@ public final class MainKeyboardView extends KeyboardView implements PointerTrack
         // been detached.  This is needed to invalidate the reference of {@link MainKeyboardView}
         // to null.
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.getInstance().mainKeyboardView_onDetachedFromWindow();
+        	//<changed>
+//            ResearchLogger.getInstance().mainKeyboardView_onDetachedFromWindow();
         }
     }
 
@@ -935,7 +936,8 @@ public final class MainKeyboardView extends KeyboardView implements PointerTrack
             return;
         }
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.mainKeyboardView_onLongPress();
+        	//<changed>
+//            ResearchLogger.mainKeyboardView_onLongPress();
         }
         final KeyboardActionListener listener = mKeyboardActionListener;
         if (key.hasNoPanelAutoMoreKey()) {
@@ -1035,9 +1037,10 @@ public final class MainKeyboardView extends KeyboardView implements PointerTrack
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (AccessibilityUtils.getInstance().isTouchExplorationEnabled()) {
-            return AccessibleKeyboardViewProxy.getInstance().dispatchTouchEvent(event);
-        }
+    	//<changed_accessibility>
+//        if (AccessibilityUtils.getInstance().isTouchExplorationEnabled()) {
+//            return AccessibleKeyboardViewProxy.getInstance().dispatchTouchEvent(event);
+//        }
         return super.dispatchTouchEvent(event);
     }
 
@@ -1064,7 +1067,8 @@ public final class MainKeyboardView extends KeyboardView implements PointerTrack
         }
         // Currently the same "move" event is being logged twice.
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.mainKeyboardView_processMotionEvent(me);
+        	//<changed>
+//            ResearchLogger.mainKeyboardView_processMotionEvent(me);
         }
 
         final int index = me.getActionIndex();
@@ -1098,10 +1102,11 @@ public final class MainKeyboardView extends KeyboardView implements PointerTrack
      */
     @Override
     public boolean dispatchHoverEvent(final MotionEvent event) {
-        if (AccessibilityUtils.getInstance().isTouchExplorationEnabled()) {
-            final PointerTracker tracker = PointerTracker.getPointerTracker(0, this);
-            return AccessibleKeyboardViewProxy.getInstance().dispatchHoverEvent(event, tracker);
-        }
+    	//<changed_accessibility>
+//        if (AccessibilityUtils.getInstance().isTouchExplorationEnabled()) {
+//            final PointerTracker tracker = PointerTracker.getPointerTracker(0, this);
+//            return AccessibleKeyboardViewProxy.getInstance().dispatchHoverEvent(event, tracker);
+//        }
 
         // Reflection doesn't support calling superclass methods.
         return false;

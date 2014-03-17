@@ -16,6 +16,8 @@
 
 package com.android.inputmethod.keyboard;
 
+import java.util.HashSet;
+
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -39,9 +41,6 @@ import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.define.ProductionFlag;
 import com.android.inputmethod.latin.utils.CollectionUtils;
 import com.android.inputmethod.latin.utils.TypefaceUtils;
-import com.android.inputmethod.research.ResearchLogger;
-
-import java.util.HashSet;
 
 /**
  * A view that renders a virtual {@link Keyboard}.
@@ -304,7 +303,8 @@ public class KeyboardView extends View {
         // TODO: Reimplement using a keyboard background image specific to the ResearchLogger,
         // and remove this call.
         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
-            ResearchLogger.getInstance().paintIndicator(this, paint, canvas, width, height);
+        	//<changed>
+//            ResearchLogger.getInstance().paintIndicator(this, paint, canvas, width, height);
         }
 
         mInvalidatedKeys.clear();

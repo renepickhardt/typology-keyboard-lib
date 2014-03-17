@@ -50,7 +50,6 @@ import com.android.inputmethod.latin.utils.AdditionalSubtypeUtils;
 import com.android.inputmethod.latin.utils.ApplicationUtils;
 import com.android.inputmethod.latin.utils.FeedbackUtils;
 import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
-import com.android.inputmethod.research.ResearchLogger;
 import com.android.inputmethodcommon.InputMethodSettingsFragment;
 
 public final class SettingsFragment extends InputMethodSettingsFragment
@@ -145,7 +144,8 @@ public final class SettingsFragment extends InputMethodSettingsFragment
                     public boolean onPreferenceClick(final Preference pref) {
                         if (ProductionFlag.USES_DEVELOPMENT_ONLY_DIAGNOSTICS) {
                             // Use development-only feedback mechanism
-                            ResearchLogger.getInstance().presentFeedbackDialogFromSettings();
+                        	//<changed>
+//                            ResearchLogger.getInstance().presentFeedbackDialogFromSettings();
                         } else {
                             FeedbackUtils.showFeedbackForm(getActivity());
                         }

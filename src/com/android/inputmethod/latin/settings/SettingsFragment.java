@@ -43,7 +43,6 @@ import com.android.inputmethod.latin.AudioAndHapticFeedbackManager;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.SubtypeSwitcher;
 import com.android.inputmethod.latin.define.ProductionFlag;
-import com.android.inputmethod.latin.setup.LauncherIconVisibilityManager;
 import com.android.inputmethod.latin.userdictionary.UserDictionaryList;
 import com.android.inputmethod.latin.userdictionary.UserDictionarySettings;
 import com.android.inputmethod.latin.utils.AdditionalSubtypeUtils;
@@ -283,7 +282,8 @@ public final class SettingsFragment extends InputMethodSettingsFragment
             setPreferenceEnabled(Settings.PREF_INCLUDE_OTHER_IMES_IN_LANGUAGE_SWITCH_LIST,
                     Settings.readShowsLanguageSwitchKey(prefs));
         } else if (key.equals(Settings.PREF_SHOW_SETUP_WIZARD_ICON)) {
-            LauncherIconVisibilityManager.updateSetupWizardIconVisibility(getActivity());
+        	//<changed_setup>
+//            LauncherIconVisibilityManager.updateSetupWizardIconVisibility(getActivity());
         }
         ensureConsistencyOfAutoCorrectionSettings();
         updateShowCorrectionSuggestionsSummary();

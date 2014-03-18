@@ -20,7 +20,7 @@ import android.content.Context;
 
 import com.android.inputmethod.annotations.UsedForTesting;
 import com.android.inputmethod.compat.ActivityManagerCompatUtils;
-import com.android.inputmethod.keyboard.ProximityInfo;
+import com.android.inputmethod.keyboard.leftover.ProximityInfo;
 import com.android.inputmethod.latin.AbstractDictionaryWriter;
 import com.android.inputmethod.latin.ExpandableDictionary;
 import com.android.inputmethod.latin.WordComposer;

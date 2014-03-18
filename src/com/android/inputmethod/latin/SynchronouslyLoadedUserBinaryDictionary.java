@@ -18,7 +18,7 @@ package com.android.inputmethod.latin;
 
 import android.content.Context;
 
-import com.android.inputmethod.keyboard.ProximityInfo;
+import com.android.inputmethod.keyboard.leftover.ProximityInfo;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
 
 import java.util.ArrayList;

@@ -18,6 +18,10 @@ package com.android.inputmethod.latin;
 
 import static com.android.inputmethod.latin.Constants.Subtype.ExtraValue.REQ_NETWORK_CONNECTIVITY;
 
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -32,12 +36,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.android.inputmethod.annotations.UsedForTesting;
-import com.android.inputmethod.keyboard.KeyboardSwitcher;
 import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 public final class SubtypeSwitcher {
     private static boolean DBG = LatinImeLogger.sDBG;
@@ -239,7 +238,8 @@ public final class SubtypeSwitcher {
                 ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
         mIsNetworkConnected = !noConnection;
 
-        KeyboardSwitcher.getInstance().onNetworkStateChanged();
+      //<changed_keyboard>
+//        KeyboardSwitcher.getInstance().onNetworkStateChanged();
     }
 
     //////////////////////////////////

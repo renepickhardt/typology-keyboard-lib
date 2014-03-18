@@ -27,9 +27,7 @@ import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 
 import com.android.inputmethod.annotations.UsedForTesting;
-import com.android.inputmethod.keyboard.internal.KeySpecParser;
 import com.android.inputmethod.latin.Constants;
-import com.android.inputmethod.latin.Dictionary;
 import com.android.inputmethod.latin.InputAttributes;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.RichInputMethodManager;
@@ -118,9 +116,12 @@ public final class SettingsValues {
         mWordConnectors =
                 StringUtils.toCodePointArray(res.getString(R.string.symbols_word_connectors));
         Arrays.sort(mWordConnectors);
-        final String[] suggestPuncsSpec = KeySpecParser.splitKeySpecs(res.getString(
-                R.string.suggested_punctuations));
-        mSuggestPuncList = createSuggestPuncList(suggestPuncsSpec);
+      //<changed_keyboard>
+//        final String[] suggestPuncsSpec = KeySpecParser.splitKeySpecs(res.getString(
+//                R.string.suggested_punctuations));
+//        mSuggestPuncList = createSuggestPuncList(suggestPuncsSpec);
+        mSuggestPuncList = null;
+        
         mWordSeparators = res.getString(R.string.symbols_word_separators);
         mSentenceSeparator = res.getInteger(R.integer.sentence_separator);
         mHintToSaveText = res.getText(R.string.hint_add_to_dictionary);
@@ -297,16 +298,17 @@ public final class SettingsValues {
     // Helper functions to create member values.
     private static SuggestedWords createSuggestPuncList(final String[] puncs) {
         final ArrayList<SuggestedWordInfo> puncList = CollectionUtils.newArrayList();
-        if (puncs != null) {
-            for (final String puncSpec : puncs) {
-                // TODO: Stop using KeySpceParser.getLabel().
-                puncList.add(new SuggestedWordInfo(KeySpecParser.getLabel(puncSpec),
-                        SuggestedWordInfo.MAX_SCORE, SuggestedWordInfo.KIND_HARDCODED,
-                        Dictionary.DICTIONARY_HARDCODED,
-                        SuggestedWordInfo.NOT_AN_INDEX /* indexOfTouchPointOfSecondWord */,
-                        SuggestedWordInfo.NOT_A_CONFIDENCE /* autoCommitFirstWordConfidence */));
-            }
-        }
+      //<changed_keyboard>
+//        if (puncs != null) {
+//            for (final String puncSpec : puncs) {
+//                // TODO: Stop using KeySpceParser.getLabel().
+//                puncList.add(new SuggestedWordInfo(KeySpecParser.getLabel(puncSpec),
+//                        SuggestedWordInfo.MAX_SCORE, SuggestedWordInfo.KIND_HARDCODED,
+//                        Dictionary.DICTIONARY_HARDCODED,
+//                        SuggestedWordInfo.NOT_AN_INDEX /* indexOfTouchPointOfSecondWord */,
+//                        SuggestedWordInfo.NOT_A_CONFIDENCE /* autoCommitFirstWordConfidence */));
+//            }
+//        }
         return new SuggestedWords(puncList,
                 false /* typedWordValid */,
                 false /* hasAutoCorrectionCandidate */,

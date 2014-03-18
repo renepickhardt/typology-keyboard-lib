@@ -22,7 +22,6 @@ import com.android.inputmethod.dictionarypack.DictionarySettingsFragment;
 import com.android.inputmethod.latin.settings.AdditionalSubtypeSettings;
 import com.android.inputmethod.latin.settings.DebugSettings;
 import com.android.inputmethod.latin.settings.SettingsFragment;
-import com.android.inputmethod.latin.spellcheck.SpellCheckerSettingsFragment;
 import com.android.inputmethod.latin.userdictionary.UserDictionaryAddWordFragment;
 import com.android.inputmethod.latin.userdictionary.UserDictionaryList;
 import com.android.inputmethod.latin.userdictionary.UserDictionaryLocalePicker;
@@ -36,7 +35,7 @@ public class FragmentUtils {
         sLatinImeFragments.add(AdditionalSubtypeSettings.class.getName());
         sLatinImeFragments.add(DebugSettings.class.getName());
         sLatinImeFragments.add(SettingsFragment.class.getName());
-        sLatinImeFragments.add(SpellCheckerSettingsFragment.class.getName());
+//        sLatinImeFragments.add(SpellCheckerSettingsFragment.class.getName());
         sLatinImeFragments.add(UserDictionaryAddWordFragment.class.getName());
         sLatinImeFragments.add(UserDictionaryList.class.getName());
         sLatinImeFragments.add(UserDictionaryLocalePicker.class.getName());

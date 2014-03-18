@@ -24,7 +24,6 @@ import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 
-import com.android.inputmethod.keyboard.KeyboardSwitcher;
 import com.android.inputmethod.latin.LatinImeLogger;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.debug.ExternalDictionaryGetterForDebug;
@@ -112,9 +111,10 @@ public final class DebugSettings extends PreferenceFragment
                 updateDebugMode();
                 mServiceNeedsRestart = true;
             }
-        } else if (key.equals(PREF_FORCE_NON_DISTINCT_MULTITOUCH)
-                || key.equals(KeyboardSwitcher.PREF_KEYBOARD_LAYOUT)) {
-            mServiceNeedsRestart = true;
+          //<changed_keyboard>
+//        } else if (key.equals(PREF_FORCE_NON_DISTINCT_MULTITOUCH)
+//                || key.equals(KeyboardSwitcher.PREF_KEYBOARD_LAYOUT)) {
+//            mServiceNeedsRestart = true;
         } else if (key.equals(PREF_USE_ONLY_PERSONALIZATION_DICTIONARY_FOR_DEBUG)) {
             mServiceNeedsRestart = true;
         }

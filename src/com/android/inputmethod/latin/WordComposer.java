@@ -16,11 +16,9 @@
 
 package com.android.inputmethod.latin;
 
-import com.android.inputmethod.keyboard.Key;
-import com.android.inputmethod.keyboard.Keyboard;
-import com.android.inputmethod.latin.utils.StringUtils;
-
 import java.util.Arrays;
+
+import com.android.inputmethod.latin.utils.StringUtils;
 
 /**
  * A place to store the currently composing word with information such as adjacent key codes as well
@@ -263,36 +261,6 @@ public final class WordComposer {
             // (See {@link #add(int,int,int)}).
             add(codePoint, Constants.NOT_A_COORDINATE, Constants.NOT_A_COORDINATE);
         }
-    }
-
-    /**
-     * Add a dummy key by retrieving reasonable coordinates
-     */
-    public void addKeyInfo(final int codePoint, final Keyboard keyboard) {
-        final int x, y;
-        final Key key;
-        if (keyboard != null && (key = keyboard.getKey(codePoint)) != null) {
-            x = key.getX() + key.getWidth() / 2;
-            y = key.getY() + key.getHeight() / 2;
-        } else {
-            x = Constants.NOT_A_COORDINATE;
-            y = Constants.NOT_A_COORDINATE;
-        }
-        add(codePoint, x, y);
-    }
-
-    /**
-     * Set the currently composing word to the one passed as an argument.
-     * This will register NOT_A_COORDINATE for X and Ys, and use the passed keyboard for proximity.
-     */
-    public void setComposingWord(final CharSequence word, final Keyboard keyboard) {
-        reset();
-        final int length = word.length();
-        for (int i = 0; i < length; i = Character.offsetByCodePoints(word, i, 1)) {
-            final int codePoint = Character.codePointAt(word, i);
-            addKeyInfo(codePoint, keyboard);
-        }
-        mIsResumed = true;
     }
 
     /**

@@ -19,8 +19,6 @@ package com.android.inputmethod.latin;
 import android.content.SharedPreferences;
 import android.view.inputmethod.EditorInfo;
 
-import com.android.inputmethod.keyboard.Keyboard;
-
 public final class LatinImeLogger implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static boolean sDBG = false;
@@ -78,9 +76,6 @@ public final class LatinImeLogger implements SharedPreferences.OnSharedPreferenc
     }
 
     public static void onAddSuggestedWord(String word, String sourceDictionaryId) {
-    }
-
-    public static void onSetKeyboard(Keyboard kb) {
     }
 
     public static void onPrintAllUsabilityStudyLogs() {

@@ -21,7 +21,7 @@ import android.os.SystemClock;
 import android.util.Log;
 
 import com.android.inputmethod.annotations.UsedForTesting;
-import com.android.inputmethod.keyboard.ProximityInfo;
+import com.android.inputmethod.keyboard.leftover.ProximityInfo;
 import com.android.inputmethod.latin.makedict.FormatSpec;
 import com.android.inputmethod.latin.personalization.DynamicPersonalizationDictionaryWriter;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;

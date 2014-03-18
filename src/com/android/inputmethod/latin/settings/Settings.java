@@ -16,6 +16,10 @@
 
 package com.android.inputmethod.latin.settings;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.concurrent.locks.ReentrantLock;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -23,7 +27,6 @@ import android.content.res.Resources;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.android.inputmethod.latin.AudioAndHapticFeedbackManager;
 import com.android.inputmethod.latin.InputAttributes;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.utils.AdditionalSubtypeUtils;
@@ -31,10 +34,6 @@ import com.android.inputmethod.latin.utils.LocaleUtils;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 import com.android.inputmethod.latin.utils.RunInLocale;
 import com.android.inputmethod.latin.utils.StringUtils;
-
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.concurrent.locks.ReentrantLock;
 
 public final class Settings implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = Settings.class.getSimpleName();
@@ -194,9 +193,11 @@ public final class Settings implements SharedPreferences.OnSharedPreferenceChang
 
     public static boolean readVibrationEnabled(final SharedPreferences prefs,
             final Resources res) {
-        final boolean hasVibrator = AudioAndHapticFeedbackManager.getInstance().hasVibrator();
-        return hasVibrator && prefs.getBoolean(PREF_VIBRATE_ON,
-                res.getBoolean(R.bool.config_default_vibration_enabled));
+    	//<changed>
+//        final boolean hasVibrator = AudioAndHapticFeedbackManager.getInstance().hasVibrator();
+//        return hasVibrator && prefs.getBoolean(PREF_VIBRATE_ON,
+//                res.getBoolean(R.bool.config_default_vibration_enabled));
+    	return false;
     }
 
     public static boolean readAutoCorrectEnabled(final String currentAutoCorrectionSetting,

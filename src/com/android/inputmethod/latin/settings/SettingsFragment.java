@@ -39,7 +39,6 @@ import android.util.Log;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.android.inputmethod.dictionarypack.DictionarySettingsActivity;
-import com.android.inputmethod.latin.AudioAndHapticFeedbackManager;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.SubtypeSwitcher;
 import com.android.inputmethod.latin.define.ProductionFlag;
@@ -103,7 +102,8 @@ public final class SettingsFragment extends InputMethodSettingsFragment
         // initialization method of these classes here. See {@link LatinIME#onCreate()}.
         SubtypeSwitcher.init(context);
         SubtypeLocaleUtils.init(context);
-        AudioAndHapticFeedbackManager.init(context);
+        //<changed>
+//        AudioAndHapticFeedbackManager.init(context);
 
         mVoiceInputKeyPreference =
                 (CheckBoxPreference) findPreference(Settings.PREF_VOICE_INPUT_KEY);
@@ -171,10 +171,12 @@ public final class SettingsFragment extends InputMethodSettingsFragment
 
         final PreferenceGroup advancedSettings =
                 (PreferenceGroup) findPreference(Settings.PREF_ADVANCED_SETTINGS);
-        if (!AudioAndHapticFeedbackManager.getInstance().hasVibrator()) {
+        
+        //<changed>
+//        if (!AudioAndHapticFeedbackManager.getInstance().hasVibrator()) {
             removePreference(Settings.PREF_VIBRATE_ON, generalSettings);
             removePreference(Settings.PREF_VIBRATION_DURATION_SETTINGS, advancedSettings);
-        }
+//        }
 
         mKeyPreviewPopupDismissDelay =
                 (ListPreference) findPreference(Settings.PREF_KEY_PREVIEW_POPUP_DISMISS_DELAY);
@@ -366,7 +368,8 @@ public final class SettingsFragment extends InputMethodSettingsFragment
 
             @Override
             public void feedbackValue(final int value) {
-                AudioAndHapticFeedbackManager.getInstance().vibrate(value);
+            	//<changed>
+//                AudioAndHapticFeedbackManager.getInstance().vibrate(value);
             }
 
             @Override

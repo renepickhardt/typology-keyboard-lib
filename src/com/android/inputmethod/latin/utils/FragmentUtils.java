@@ -19,7 +19,6 @@ package com.android.inputmethod.latin.utils;
 import java.util.HashSet;
 
 import com.android.inputmethod.dictionarypack.DictionarySettingsFragment;
-import com.android.inputmethod.latin.about.AboutPreferences;
 import com.android.inputmethod.latin.settings.AdditionalSubtypeSettings;
 import com.android.inputmethod.latin.settings.DebugSettings;
 import com.android.inputmethod.latin.settings.SettingsFragment;
@@ -33,7 +32,7 @@ public class FragmentUtils {
     private static final HashSet<String> sLatinImeFragments = new HashSet<String>();
     static {
         sLatinImeFragments.add(DictionarySettingsFragment.class.getName());
-        sLatinImeFragments.add(AboutPreferences.class.getName());
+//        sLatinImeFragments.add(AboutPreferences.class.getName());
         sLatinImeFragments.add(AdditionalSubtypeSettings.class.getName());
         sLatinImeFragments.add(DebugSettings.class.getName());
         sLatinImeFragments.add(SettingsFragment.class.getName());

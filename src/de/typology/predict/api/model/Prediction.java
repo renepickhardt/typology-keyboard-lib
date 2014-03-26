@@ -10,6 +10,14 @@ package de.typology.predict.api.model;
  */
 public final class Prediction {
 	
-	public Prediction(String name, double score) {}
+	private final CharSequence name;
+	
+	public Prediction(CharSequence name, double score) {
+		this.name = name;
+	}
+	
+	public CharSequence getText() {
+		return name;
+	}
 
 }

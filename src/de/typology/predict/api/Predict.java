@@ -30,7 +30,7 @@ public class Predict {
 	//more configurations go here like timeouts, blocking offensive words,
 	//...
 	
-	
+	//TODO: What is the reason for making Predict singleton?
 	private static Predict instance;
 	
 	//the class is not publicly instantiable
@@ -48,6 +48,7 @@ public class Predict {
 	 * for the enabled languages
 	 * @param provider The LanguageModelProvider
 	 */
+	//TODO: can the class have more than one provider? if not call it setLMProvider if yes wouldn't one also need enable and disable LM methods?
 	public void addLMProvider(LanguageModelProvider provider) {}
 	
 	/**

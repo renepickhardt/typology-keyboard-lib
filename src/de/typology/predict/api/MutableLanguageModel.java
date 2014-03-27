@@ -17,4 +17,6 @@ public interface MutableLanguageModel extends LanguageModel {
 	 */
 	public void addNgram(CharSequence[] ngram);
 
+	//TODO: what about removing?
+	//TODO: in general do we need mutable LMs? is this thought for the personalized LM?
 }

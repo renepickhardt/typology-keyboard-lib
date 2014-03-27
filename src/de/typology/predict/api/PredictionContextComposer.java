@@ -5,7 +5,9 @@ package de.typology.predict.api;
  * It stores the word currently composed as well as it's predecessor words
  * 
  * @author till
- *
+ * TODO: do I understand it correctly that this class is used to communicate with the android keyboard and can be exchanged when for example making predictions in another environment?
+ * TODO: ok I see it is also used internally while the async callback is executed
+ * TODO: for all classes we need to discuss where and how android is a dependency. and we should try to decouple from android as much as possible
  */
 public class PredictionContextComposer {
 	

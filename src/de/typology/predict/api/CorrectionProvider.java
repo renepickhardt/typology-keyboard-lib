@@ -16,6 +16,8 @@ import de.typology.predict.api.model.Correction;
 public interface CorrectionProvider {
 	
 	/**
+	 * TODO: corrections might need a context and not just a word
+	 * TODO: to be discussed corrections might need a confidence score
 	 * Computes possible corrections for a word
 	 * 
 	 * @param word The word to correct

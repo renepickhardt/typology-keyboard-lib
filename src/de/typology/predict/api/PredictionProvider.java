@@ -57,5 +57,6 @@ public class PredictionProvider {
 			OnPredictionsComputedCallback callback) {
 		return 0;
 	}
+	// TODO: do we have some example code (maybe some other android project how the usage of callbacks works. It seems to me like android is doing this really nicely)
 
 }

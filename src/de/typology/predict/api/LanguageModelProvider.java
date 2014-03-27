@@ -17,6 +17,7 @@ public interface LanguageModelProvider {
 	 */
 	public boolean hasLanguageModel(Language lang);
 	
+	//TODO: are the following two methods providing the same language modle one as mutable and one as the non mutable one? or will the objects behind provide two different LMs? 
 	public LanguageModel getLanguageModel(Language lang);
 	
 	public MutableLanguageModel getMutableLanguageModel(Language lang);

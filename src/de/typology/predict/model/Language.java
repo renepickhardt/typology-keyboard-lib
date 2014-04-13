@@ -1,4 +1,4 @@
-package de.typology.predict.api.model;
+package de.typology.predict.model;
 
 public enum Language {
 	ENGLISH,

@@ -1,8 +1,8 @@
-package de.typology.predict.api;
+package de.typology.predict;
 
 import java.util.List;
 
-import de.typology.predict.api.model.Prediction;
+import de.typology.predict.model.Prediction;
 
 public interface OnPredictionsComputedCallback {
 	
@@ -13,7 +13,7 @@ public interface OnPredictionsComputedCallback {
 	 * relevance
 	 * @param querryId The id of the prediction querry
 	 */
-	public void onPredictionsComputed(List<Prediction> predictions,
+	public void onPredictionsComputed(final List<Prediction> predictions,
 			long querryId);
 
 }

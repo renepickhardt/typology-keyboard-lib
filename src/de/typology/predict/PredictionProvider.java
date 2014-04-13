@@ -1,61 +1,17 @@
-package de.typology.predict.api;
+package de.typology.predict;
 
+import java.util.List;
+
+import de.typology.predict.model.Prediction;
 
 /**
- * The class for computing the predictions.
+ * This interface is implemented by all classes that compute predictions.
  * 
  * @author till
  *
  */
-public class PredictionProvider {
+public interface PredictionProvider {
 	
-	/**
-	 * Sets the correction provider used for correcting the current word
-	 * 
-	 * @param corProv the CorrectionProvider to use
-	 */
-	public PredictionProvider(CorrectionProvider corProv) {}
-	
-	/**
-	 * @return The instance of the PredictionContextComposer used by
-	 * this PredictionProvider
-	 */
-	public PredictionContextComposer getPredictionContextComposer() {
-		return null;
-	}
-	
-	//this method probably makes sense but with respect to our usecase
-	//the PredictionContextComposer should be used
-	//re-add this later
-//	/**
-//	 * Computes predictions given the current word and its
-//	 * predecessors
-//	 * 
-//	 * @param currentWord The word that is currently typed
-//	 * @param previousWords The predecessor words of the current word
-//	 * @param correctCurrentWord Whether the the current word should be
-//	 * corrected
-//	 * @param callback the callback to call when the computation is done
-//	 * @return The id of this prediction querry
-//	 */
-//	public long getPredictions(CharSequence currentWord, CharSequence[] previousWords,
-//			boolean correctCurrentWord, OnPredictionsComputedCallback callback) {
-//		Prediction[] predictions = {new Prediction(currentWord, 0.0)};
-//		callback.onPredictionsComputed(Arrays.asList(predictions), 0);
-//		return 0;
-//	}
-	
-	/**
-	 * Computes predictions using the state of the PredictionContextComposer
-	 * 
-	 * @param correctCurrentWord Whether the the current word should be
-	 * corrected
-	 * @param callback the callback to call when the computation is done
-	 * @return The id of this prediction querry
-	 */
-	public long getPredictions(boolean correctCurrentWord,
-			OnPredictionsComputedCallback callback) {
-		return 0;
-	}
+	public List<Prediction> getPredictions(final ImmutablePredictionContextComposer composer);
 
 }

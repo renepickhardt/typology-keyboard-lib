@@ -1,4 +1,4 @@
-package de.typology.predict.api.model;
+package de.typology.predict.model;
 
 /**
  * Holds the information about a prediction:
@@ -12,12 +12,16 @@ public final class Prediction {
 	
 	private final CharSequence name;
 	
-	public Prediction(CharSequence name, double score) {
+	public Prediction(CharSequence name, int score) {
 		this.name = name;
 	}
 	
 	public CharSequence getText() {
 		return name;
+	}
+	
+	public int getScore() {
+		return 0;
 	}
 
 }

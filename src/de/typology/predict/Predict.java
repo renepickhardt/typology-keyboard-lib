@@ -1,62 +1,73 @@
-package de.typology.predict.api;
+package de.typology.predict;
 
-import de.typology.predict.api.model.Language;
 
 /**
- * A class for configuring the prediction computation
+ * The class for managing the prediction computation.
  * 
  * @author till
  *
  */
-public class Predict {
-	
-	public static final int MAX_NGRAM_LENGTH = 5;
-	public static final int MAX_WORD_LENGTH = 48;
+public final class Predict {
 	
 	/**
-	 * Adds a language to the list of languages used for the predictions
+	 * Sets the correction provider used for correcting the current word
 	 * 
-	 * @param lang The added language
+	 * @param corProv the CorrectionProvider to use
 	 */
-	public static void enableLanguage(Language lang) {}
+	public Predict() {}
 	
 	/**
-	 * Removed a language from the list of languages used for predictions
-	 * 
-	 * @param lang The removed language
+	 * @return The instance of the PredictionContextComposer used by
+	 * this PredictionProvider
 	 */
-	public static void disableLanguage(Language lang) {}
-	
-	//more configurations go here like timeouts, blocking offensive words,
-	//...
-	
-	
-	private static Predict instance;
-	
-	//the class is not publicly instantiable
-	private Predict() {}
-	
-	public Predict getInstance() {
-		if (instance == null) {
-			instance = new Predict();
-		}
-		return instance;
+	public PredictionContextComposer getPredictionContextComposer() {
+		return null;
 	}
 	
 	/**
-	 * Adds the language model provider that is used to get language models
-	 * for the enabled languages
-	 * @param provider The LanguageModelProvider
+	 * Loads the sources for prediction computation asynchronously.
 	 */
-	public void addLMProvider(LanguageModelProvider provider) {}
+	public void opensPredictionSources() {}
+	
+	public void closePredictionSources() {}
+	
+	//this method probably makes sense but with respect to our usecase
+	//the PredictionContextComposer should be used
+	//re-add this later
+//	/**
+//	 * Computes predictions given the current word and its
+//	 * predecessors
+//	 * 
+//	 * @param currentWord The word that is currently typed
+//	 * @param previousWords The predecessor words of the current word
+//	 * @param correctCurrentWord Whether the the current word should be
+//	 * corrected
+//	 * @param callback the callback to call when the computation is done
+//	 * @return The id of this prediction querry
+//	 */
+//	public long getPredictions(CharSequence currentWord, CharSequence[] previousWords,
+//			boolean correctCurrentWord, OnPredictionsComputedCallback callback) {
+//		Prediction[] predictions = {new Prediction(currentWord, 0.0)};
+//		callback.onPredictionsComputed(Arrays.asList(predictions), 0);
+//		return 0;
+//	}
+	
+	public enum PredictionMode {
+		CORRECT_CURRENT_WORD,
+		DO_NOT_CORRECT_CURRENT_WORD
+		//batch input,...
+	}
 	
 	/**
-	 * @param lang The language
-	 * @return whether or not predictions in this language are
-	 * supported, e.g. if a language model for this language exists
+	 * Computes predictions using the current state of the PredictionContextComposer
+	 * 
+	 * @param mode How the predictions are computed
+	 * @param callback The callback to call when the computation is done
+	 * @return The id of this prediction querry
 	 */
-	public boolean isLanguageAvailable(Language lang) {
-		return false;
+	public long getPredictions(final PredictionMode mode,
+			final OnPredictionsComputedCallback callback) {
+		return 0;
 	}
 	
 }

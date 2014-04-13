@@ -69,5 +69,4 @@ public final class Predict {
 			final OnPredictionsComputedCallback callback) {
 		return 0;
 	}
-	
 }

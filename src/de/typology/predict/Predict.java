@@ -27,7 +27,7 @@ public final class Predict {
 	/**
 	 * Loads the sources for prediction computation asynchronously.
 	 */
-	public void opensPredictionSources() {}
+	public void loadPredictionSources() {}
 	
 	public void closePredictionSources() {}
 	

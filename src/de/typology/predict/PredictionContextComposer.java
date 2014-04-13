@@ -20,6 +20,14 @@ public final class PredictionContextComposer implements ImmutablePredictionConte
 	protected PredictionContextComposer() {}
 	
 	/**
+	 * Sets the keyboard the text is composed in
+	 */
+	//Can be used for corrections in conjunction with the input key's coordinates
+	//TODO: find an appropriate class as parameter type an add parameter
+	//TODO: what about multiple keyboards, e.g. for letters and digits?
+	public void setKeyboard(/* keyboard */) {}
+	
+	/**
 	 * Deletes the word the cursor is currently in.
 	 */
 	public void clearCurrentWord() {}
@@ -36,8 +44,8 @@ public final class PredictionContextComposer implements ImmutablePredictionConte
 	 * the current word.
 	 * 
 	 * @param character The character to append.
-	 * @param posX The key press' x-coordinate.
-	 * @param posY The key press' y-coordinate.
+	 * @param posX The key press' x-coordinate. Ignored if < 0.
+	 * @param posY The key press' y-coordinate. Ignored if < 0.
 	 * @param isSeparator Whether the character is a word separator.
 	 */
 	//we need to use int here because char cannot store all unicode characters
@@ -71,8 +79,13 @@ public final class PredictionContextComposer implements ImmutablePredictionConte
 	 * The current word is replaced with word.
 	 * 
 	 * @param word
+	 * @param isAutoCommited Whether the replacement is an auto commit.
 	 */
-	public void setCurrentWord(final CharSequence word) {}
+	//If the replacement is auto committed and we receive deletions afterwards
+	//we might want to restore the previous value for this word since the auto
+	//commit might be wrong
+	//TODO: are auto- and non-auto-committed (= user-selected) the only options here?
+	public void setCurrentWord(final CharSequence word, boolean isAutoCommited) {}
 	
 	/**
 	 * The words before the current word are replaced by predecessors.

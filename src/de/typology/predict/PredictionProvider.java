@@ -12,6 +12,10 @@ import de.typology.predict.model.Prediction;
  */
 public interface PredictionProvider {
 	
+	public void start();
+	
+	public void end();
+	
 	public List<Prediction> getPredictions(final ImmutablePredictionContextComposer composer);
 
 }

@@ -18,25 +18,38 @@ public final class PredictionConfig {
 	
 	public static final int PREDICTION_TIMEOUT = 200;
 	
+	public interface PredictionConfigChangeListener {
+		
+		public void onPredictionConfigChanged();
+		
+	}
+	
 	private PredictionConfig() {}
 	
 	/**
-	 * Adds a language to the list of languages used for the predictions
-	 * 
-	 * @param lang The added language
+	 * Registers listener that are notified if configurations change
+	 * @param listener
 	 */
-	public static void enableLanguage(final Language lang) {}
+	public static void registerConfigChangeListener(PredictionConfigChangeListener listener) {}
 	
 	/**
-	 * Removed a language from the list of languages used for predictions
+	 * Enables or disables predictions in the given language
 	 * 
-	 * @param lang The removed language
+	 * @param lang The language that is en- or disabled
+	 * @param isEnabled Whether the language is en- or disabled
 	 */
-	public static void disableLanguage(final Language lang) {}
+	public static void setLanguageEnabled(final Language lang, final boolean isEnabled) {}
 	
 	public static List<Language> getEnabledLanguages() {
 		return null;
 	}
+	
+	/**
+	 * Whether contacts should be used for predictions
+	 * 
+	 * @param isEnabled
+	 */
+	public static void setUseContactsEnabled(boolean isEnabled) {}
 	
 	//more configurations go here like timeouts, blocking offensive words,
 	//...

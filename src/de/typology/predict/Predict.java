@@ -1,5 +1,8 @@
 package de.typology.predict;
 
+import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
+
+
 
 /**
  * The class for managing the prediction computation.
@@ -7,7 +10,7 @@ package de.typology.predict;
  * @author till
  *
  */
-public final class Predict {
+public final class Predict implements PredictionConfigChangeListener {
 	
 	/**
 	 * Sets the correction provider used for correcting the current word
@@ -68,5 +71,24 @@ public final class Predict {
 	public long getPredictions(final PredictionMode mode,
 			final OnPredictionsComputedCallback callback) {
 		return 0;
+	}
+	
+	/**
+	 * Reports that the current word (the word the cursor is currently in) was
+	 * commited to the editor
+	 */
+	//We use this to give feedback to a learning prediction source
+	//TODO: should this be here or in the PredictionContextComposer? If so,
+	// we would need a listener for this event
+	public void reportCurrentWordCommited() {}
+	
+	//multiple things need to be done asynchronously:
+	//-getting suggestions
+	//-loading (and closing?) the PredictionProviders
+	//-feeding back information to the PredictionProviders
+	
+	@Override
+	public void onPredictionConfigChanged() {
+		//reload PredictionProviders here
 	}
 }

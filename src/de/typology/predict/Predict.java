@@ -89,17 +89,18 @@ public final class Predict implements PredictionConfigChangeListener {
 		return 0;
 	}
 
-	/**
-	 * Reports that the current word (the word the cursor is currently in) was
-	 * commited to the editor
-	 */
-	// We use this to give feedback to a learning prediction source
-	// TODO: should this be here or in the PredictionContextComposer? If so,
-	// we would need a listener for this event
-	// RENE: the question is where is the onselct event fired? (the question
-	// really is how much android is in the interfaces?)
-	public void reportCurrentWordCommited() {
-	}
+	//we are not learning yet, readd this later
+//	/**
+//	 * Reports that the current word (the word the cursor is currently in) was
+//	 * commited to the editor
+//	 */
+//	// We use this to give feedback to a learning prediction source
+//	// TODO: should this be here or in the PredictionContextComposer? If so,
+//	// we would need a listener for this event
+//	// RENE: the question is where is the onselct event fired? (the question
+//	// really is how much android is in the interfaces?)
+//	public void reportCurrentWordCommited() {
+//	}
 
 	// multiple things need to be done asynchronously:
 	// -getting suggestions

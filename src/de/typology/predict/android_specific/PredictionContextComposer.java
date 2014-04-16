@@ -1,6 +1,5 @@
 package de.typology.predict.android_specific;
 
-import de.typology.predict.ImmutablePredictionContextComposer;
 import de.typology.predict.Predict;
 import de.typology.predict.PredictionConfig;
 import de.typology.predict.model.PredictionContext;
@@ -12,8 +11,7 @@ import de.typology.predict.model.PredictionContext;
  * @author till
  * 
  */
-public final class PredictionContextComposer implements
-		ImmutablePredictionContextComposer {
+public final class PredictionContextComposer {
 
 	public static final int MAX_PREDECESSOR_WORD_AMOUNT = PredictionConfig.MAX_NGRAM_LENGTH;
 
@@ -171,22 +169,22 @@ public final class PredictionContextComposer implements
 	public void moveCursor(final int offset) {
 	}
 
-	@Override
+	
 	public int getCurrentWordSize() {
 		return 0;
 	}
 
-	@Override
+	
 	public int getNumberOfPredecessorWords() {
 		return 0;
 	}
 
-	@Override
+	
 	public int getCodeAt(int codePointIndex) {
 		return 0;
 	}
 
-	@Override
+	
 	public CharSequence getWordAt(final int wordIndex) {
 		return null;
 	}

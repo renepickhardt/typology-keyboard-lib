@@ -3,6 +3,7 @@ package de.typology.predict;
 import java.util.List;
 
 import de.typology.predict.model.Prediction;
+import de.typology.predict.model.PredictionContext;
 
 /**
  * This interface is implemented by all classes that compute predictions.
@@ -16,6 +17,6 @@ public interface PredictionProvider {
 	
 	public void end();
 	
-	public List<Prediction> getPredictions(final ImmutablePredictionContextComposer composer);
+	public List<Prediction> getPredictions(final PredictionContext composer);
 
 }

@@ -65,6 +65,7 @@ public final class PredictionConfig {
 	public static void setUseContactsEnabled(boolean isEnabled) {
 	}
 
+	// TODO: make them an issue in git this wil be forgotten otherwise.
 	// more configurations go here like timeouts, blocking offensive words,
 	// ...
 

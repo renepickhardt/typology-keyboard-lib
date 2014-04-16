@@ -1,6 +1,7 @@
 package de.typology.predict;
 
 import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
+import de.typology.predict.android_specific.PredictionContextComposer;
 
 /**
  * The class for managing the prediction computation.
@@ -60,7 +61,16 @@ public final class Predict implements PredictionConfigChangeListener {
 
 	// TODO: how will this affect our implementatiobn?
 	public enum PredictionMode {
-		CORRECT_CURRENT_WORD, DO_NOT_CORRECT_CURRENT_WORD
+		/**
+		 * Predictions with a different prefix than the given
+		 * prefix are allowed.
+		 */
+		CORRECT_CURRENT_WORD,
+		/**
+		 * Predictions with a different prefix than the given
+		 * prefix are not allowed.
+		 */
+		DO_NOT_CORRECT_CURRENT_WORD
 		// batch input,...
 	}
 

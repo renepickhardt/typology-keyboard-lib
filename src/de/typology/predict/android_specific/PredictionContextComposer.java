@@ -1,4 +1,9 @@
-package de.typology.predict;
+package de.typology.predict.android_specific;
+
+import de.typology.predict.ImmutablePredictionContextComposer;
+import de.typology.predict.Predict;
+import de.typology.predict.PredictionConfig;
+import de.typology.predict.model.PredictionContext;
 
 /**
  * A class to hold and update the state of the input. It stores the word
@@ -187,14 +192,12 @@ public final class PredictionContextComposer implements
 	}
 
 	/**
-	 * Creates an immutable copy of this composer with the same state. It can be
-	 * used to make asynchronous prediction lookups.
+	 * Creates an instance of PredictionContext with the same state as the composer.
+	 * It can be used to make asynchronous prediction lookups.
 	 * 
-	 * @return an immutable copy of this composer.
+	 * @return an instance of PredictionContext with the same state.
 	 */
-	public ImmutablePredictionContextComposer copy() {
-		// do not return this, make a copy because the returned instance
-		// will be used asynchronously
+	public PredictionContext getLookupContext() {
 		// only copy stuff before the cursor to reduce overhead and
 		// to get rid of the cursor in the read-only copy
 		return null;

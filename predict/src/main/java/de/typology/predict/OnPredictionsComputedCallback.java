@@ -15,6 +15,4 @@ public interface OnPredictionsComputedCallback {
 	 */
 	public void onPredictionsComputed(final List<Prediction> predictions,
 			long querryId);
-
-	//TODO: discuss async programming and android details.
 }

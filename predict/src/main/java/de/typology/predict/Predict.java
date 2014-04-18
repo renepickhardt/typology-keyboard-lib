@@ -1,5 +1,8 @@
 package de.typology.predict;
 
+import android.os.Handler;
+import android.os.Message;
+
 import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
 import de.typology.predict.android_specific.PredictionContextComposer;
 
@@ -102,13 +105,23 @@ public final class Predict implements PredictionConfigChangeListener {
 //	public void reportCurrentWordCommited() {
 //	}
 
+	@Override
+	public void onPredictionConfigChanged() {
+		// reload PredictionProviders here
+	}
+	
 	// multiple things need to be done asynchronously:
 	// -getting suggestions
 	// -loading (and closing?) the PredictionProviders
 	// -feeding back information to the PredictionProviders
 
-	@Override
-	public void onPredictionConfigChanged() {
-		// reload PredictionProviders here
-	}
+//    private static final class PredictionHandler implements Handler.Callback {
+//        private Handler mHandler;
+//
+//        @Override
+//        public boolean handleMessage(Message message) {
+//            return false;
+//        }
+//    }
+
 }

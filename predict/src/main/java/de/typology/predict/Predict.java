@@ -1,10 +1,6 @@
 package de.typology.predict;
 
-import android.os.Handler;
-import android.os.Message;
-
 import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
-import de.typology.predict.android_specific.PredictionContextComposer;
 
 /**
  * The class for managing the prediction computation.

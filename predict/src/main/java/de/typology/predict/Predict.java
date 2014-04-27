@@ -1,6 +1,10 @@
 package de.typology.predict;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
+import de.typology.predict.model.Prediction;
 
 /**
  * The class for managing the prediction computation.
@@ -10,13 +14,11 @@ import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
  */
 public final class Predict implements PredictionConfigChangeListener {
 
-	/**
-	 * Sets the correction provider used for correcting the current word
-	 * 
-	 * @param corProv
-	 *            the CorrectionProvider to use
-	 */
+    private final PredictionContextComposer mComposer;
+
+
 	public Predict() {
+        mComposer = new PredictionContextComposer();
 	}
 
 	/**
@@ -24,7 +26,7 @@ public final class Predict implements PredictionConfigChangeListener {
 	 *         PredictionProvider
 	 */
 	public PredictionContextComposer getPredictionContextComposer() {
-		return null;
+		return mComposer;
 	}
 
 	/**
@@ -85,7 +87,12 @@ public final class Predict implements PredictionConfigChangeListener {
 	 */
 	public long getPredictions(final PredictionMode mode,
 			final OnPredictionsComputedCallback callback) {
-		return 0;
+
+        List<Prediction> predictions = new ArrayList<Prediction>();
+        predictions.add(new Prediction("TODO", 10));
+        callback.onPredictionsComputed(predictions, 0);
+
+        return 0;
 	}
 
 	//we are not learning yet, readd this later

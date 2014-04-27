@@ -219,7 +219,7 @@ public final class PredictionContextComposer {
      * @return The current word that was typed so far.
      */
     public CharSequence getTypedWord() {
-        return null;
+        return "TODO";
     }
 	
 //	public int getNumberOfPredecessorWords() {

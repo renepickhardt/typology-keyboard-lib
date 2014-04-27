@@ -8,19 +8,19 @@ package de.typology.predict.model;
  * @author till
  * 
  */
-public final class Prediction {
+public final class Prediction implements CharSequence {
 
 	// TODO: why using CharSequence and not string?
 	// TODO: why is the variable called name?
-	private final CharSequence name;
+	private final String name;
 
-	public Prediction(CharSequence name, int score) {
+	public Prediction(String name, int score) {
 		this.name = name;
 	}
 
 	// TODO: why is it called getText and not getName? why not
 	// getPredictionString or getPredictionWord or just getWord
-	public CharSequence getText() {
+	public String getText() {
 		return this.name;
 	}
 
@@ -29,4 +29,23 @@ public final class Prediction {
 		return 0;
 	}
 
+    @Override
+    public int length() {
+        return 0;
+    }
+
+    @Override
+    public char charAt(int i) {
+        return 0;
+    }
+
+    @Override
+    public CharSequence subSequence(int i, int i2) {
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

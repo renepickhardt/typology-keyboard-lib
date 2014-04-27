@@ -1,5 +1,8 @@
 package de.typology.predict;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import de.typology.predict.Predict;
 import de.typology.predict.PredictionConfig;
 import de.typology.predict.model.PredictionContext;
@@ -15,12 +18,20 @@ public final class PredictionContextComposer {
 
 	public static final int MAX_PREDECESSOR_WORD_AMOUNT = PredictionConfig.MAX_NGRAM_LENGTH;
 
+    private StringBuilder mCurrentWord;
+    private int mCursorPosition;
+    //if you enter a unicode character that cannot be stored in a single char these values differ
+    private int mActualCursorPosition;
+
 	/**
 	 * The class is only instanciable inside the package. If one wants to obtain
 	 * an instance outside of it, he has to call
 	 * {@link Predict#getPredictionContextComposer()}.
 	 */
 	protected PredictionContextComposer() {
+        mCurrentWord = new StringBuilder();
+        mCursorPosition = 0;
+        mActualCursorPosition = 0;
 	}
 
 //	/**
@@ -39,6 +50,9 @@ public final class PredictionContextComposer {
 	 * Deletes the word the cursor is currently in.
 	 */
 	public void clearCurrentWord() {
+        mCurrentWord.setLength(0);
+        mCursorPosition = 0;
+        mActualCursorPosition = 0;
 	}
 
 	/**
@@ -55,7 +69,8 @@ public final class PredictionContextComposer {
      * togeher
      */
     public void clearEverything() {
-
+        clearPredecessorWords();
+        clearCurrentWord();
     }
 
 //	/**
@@ -91,6 +106,11 @@ public final class PredictionContextComposer {
      */
     // we need to use int here because char cannot store all unicode characters
     public void addChar(final int character, boolean isSeparator, int[] alternatives) {
+        if (!isSeparator) {
+            mCurrentWord.insert(mActualCursorPosition, Character.toChars(character));
+            mCursorPosition++;
+            mActualCursorPosition += Character.charCount(character);
+        }
     }
 
     public boolean setFirstCharCapitalized(boolean isCapitalized) {
@@ -105,6 +125,15 @@ public final class PredictionContextComposer {
 	 *         {@link #prependPredecessorWord(CharSequence)}, false otherwise.
 	 */
 	public boolean deleteBeforeCursor() {
+        if (mCursorPosition == 0)
+            return false;
+
+        final int lastCodePoint = mCurrentWord.codePointBefore(mActualCursorPosition);
+        final int charCount = Character.charCount(lastCodePoint);
+        mCurrentWord.delete(mActualCursorPosition - charCount, mActualCursorPosition - 1);
+        mCursorPosition--;
+        mActualCursorPosition -= charCount;
+
 		return false;
 	}
 
@@ -159,7 +188,7 @@ public final class PredictionContextComposer {
 	 * @return The position of the cursor in the word it is in.
 	 */
 	public int getCursorPosition() {
-		return 0;
+	    return mCursorPosition;
 	}
 
     //we ignore this for the moment. The cursor is always in the last word
@@ -189,13 +218,13 @@ public final class PredictionContextComposer {
     /**
      * Sets the cursor position inside the current word (the last word).
      *
-     * @param charIndex The index of the character after the cursor. E.g. 0
+     * @param newCursorPos The index of the character after the cursor. E.g. 0
      *                  is at the start of the word, 1 after the first character,...
      * @return True if the the index is inside the current word, e.g.
-     *                  if it is less >= 0 and <= {@link #getLength()}
+     *                  if it is >= 0 and <= {@link #getLength()}
      */
-    public boolean setCursorPosition(final int charIndex) {
-        return false;
+    public boolean setCursorPosition(final int newCursorPos) {
+        return moveCursor(newCursorPos - mCursorPosition);
     }
 
 	/**
@@ -204,22 +233,44 @@ public final class PredictionContextComposer {
 	 * 
 	 * @param offset
 	 *            The offset to move the cursor by.
+     * @return True if the cursor was moved, false if the offset is out of bounds (not moved).
 	 */
-	public void moveCursor(final int offset) {
+	public boolean moveCursor(final int offset) {
+        if (offset == 0)
+            return true;
+
+        final int moveTarget = mCursorPosition + offset;
+        if (moveTarget < 0 || moveTarget > getLength())
+            return false;
+
+        if (offset > 0) {
+            for (; mCursorPosition < moveTarget; mCursorPosition++) {
+                mActualCursorPosition += Character.isSupplementaryCodePoint(
+                        mCurrentWord.codePointAt(mActualCursorPosition)) ?
+                        2 : 1;
+            }
+        } else {
+            for (; mCursorPosition > moveTarget; mCursorPosition--) {
+                mActualCursorPosition -= Character.isSupplementaryCodePoint(
+                        mCurrentWord.codePointBefore(mActualCursorPosition)) ?
+                        2 : 1;
+            }
+        }
+        return true;
 	}
 
     /**
      * @return The length of the current word (the last word).
      */
 	public int getLength() {
-		return 0;
+        return mCurrentWord.codePointCount(0, mCurrentWord.length() - 1);
 	}
 
     /**
      * @return The current word that was typed so far.
      */
     public CharSequence getTypedWord() {
-        return "TODO";
+        return mCurrentWord;
     }
 	
 //	public int getNumberOfPredecessorWords() {

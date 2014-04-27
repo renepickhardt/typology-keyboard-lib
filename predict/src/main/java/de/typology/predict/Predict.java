@@ -89,7 +89,8 @@ public final class Predict implements PredictionConfigChangeListener {
 			final OnPredictionsComputedCallback callback) {
 
         List<Prediction> predictions = new ArrayList<Prediction>();
-        predictions.add(new Prediction("TODO", 10));
+        String value = mComposer.getTypedWord().toString();
+        predictions.add(new Prediction(value, 10));
         callback.onPredictionsComputed(predictions, 0);
 
         return 0;

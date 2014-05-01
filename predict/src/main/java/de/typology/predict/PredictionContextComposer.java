@@ -130,7 +130,7 @@ public final class PredictionContextComposer {
 
         final int lastCodePoint = mCurrentWord.codePointBefore(mActualCursorPosition);
         final int charCount = Character.charCount(lastCodePoint);
-        mCurrentWord.delete(mActualCursorPosition - charCount, mActualCursorPosition - 1);
+        mCurrentWord.delete(mActualCursorPosition - charCount, mActualCursorPosition);
         mCursorPosition--;
         mActualCursorPosition -= charCount;
 
@@ -263,7 +263,7 @@ public final class PredictionContextComposer {
      * @return The length of the current word (the last word).
      */
 	public int getLength() {
-        return mCurrentWord.codePointCount(0, mCurrentWord.length() - 1);
+        return mCurrentWord.codePointCount(0, mCurrentWord.length());
 	}
 
     /**

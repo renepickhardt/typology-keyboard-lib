@@ -31,17 +31,17 @@ public final class Prediction implements CharSequence {
 
     @Override
     public int length() {
-        return 0;
+        return name.length();
     }
 
     @Override
     public char charAt(int i) {
-        return 0;
+        return name.charAt(i);
     }
 
     @Override
     public CharSequence subSequence(int i, int i2) {
-        return null;
+        return name.subSequence(i, i2);
     }
 
     @Override

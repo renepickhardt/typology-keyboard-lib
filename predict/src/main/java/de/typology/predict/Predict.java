@@ -60,7 +60,6 @@ public final class Predict implements PredictionConfigChangeListener {
 	// return 0;
 	// }
 
-	// TODO: how will this affect our implementatiobn?
 	public enum PredictionMode {
 		/**
 		 * Predictions with a different prefix than the given
@@ -92,6 +91,10 @@ public final class Predict implements PredictionConfigChangeListener {
 
         String value = mComposer.getTypedWord().toString();
         predictions.add(new Prediction(value, 10));
+
+        for (String sugg : mComposer.getPrevWords()) {
+            predictions.add(new Prediction(sugg, 5));
+        }
 
         callback.onPredictionsComputed(predictions, 0);
 

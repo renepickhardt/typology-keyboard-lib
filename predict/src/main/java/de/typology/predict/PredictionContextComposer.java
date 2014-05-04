@@ -1,5 +1,6 @@
 package de.typology.predict;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,8 @@ public final class PredictionContextComposer {
 	public static final int MAX_PREDECESSOR_WORD_AMOUNT = PredictionConfig.MAX_NGRAM_LENGTH;
 
     private StringBuilder mCurrentWord;
+    private List<String> mPrevWords;
+
     private int mCursorPosition;
     //if you enter a unicode character that cannot be stored in a single char these values differ
     private int mActualCursorPosition;
@@ -30,6 +33,7 @@ public final class PredictionContextComposer {
 	 */
 	protected PredictionContextComposer() {
         mCurrentWord = new StringBuilder();
+        mPrevWords = new ArrayList<String>();
         mCursorPosition = 0;
         mActualCursorPosition = 0;
 	}
@@ -137,14 +141,37 @@ public final class PredictionContextComposer {
 		return false;
 	}
 
+    //TODO change semantics and name to finishCurrentWord()
+    public void moveCurrentWordToPredecessors() {
+        if (mCursorPosition > 0)
+            //we only want to make this a predecessor if the prefix before the cursor is not empty
+            mPrevWords.add(mCurrentWord.toString());
+    }
+
+    //TODO
+    public List<String> getPrevWords() {
+        return mPrevWords;
+    }
+
 	/**
 	 * The current word is replaced by the previous one.
 	 * 
-	 * @return True if more context should be added using
-	 *         {@link #prependPredecessorWord(CharSequence)}, false otherwise.
+	 * @return true if there is a previous word to resume,
+     *          false otherwise.
 	 */
 	public boolean resumePreviousWord() {
-		return false;
+	    clearCurrentWord();
+        final int prevSize = mPrevWords.size();
+        if (prevSize == 0)
+            return false;
+
+        mCurrentWord.append(mPrevWords.get(prevSize - 1));
+        final int prevWordSize = mCurrentWord.length();
+        mCursorPosition = mCurrentWord.codePointCount(0, prevWordSize);
+        mActualCursorPosition = prevWordSize;
+        mPrevWords.remove(prevSize - 1);
+
+        return true;
 	}
 
 	/**

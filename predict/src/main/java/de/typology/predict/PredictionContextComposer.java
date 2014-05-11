@@ -178,8 +178,8 @@ public final class PredictionContextComposer {
 	 * The current word is replaced with word.
 	 * 
 	 * @param word
-	 * @param isAutoCommited
-	 *            Whether the replacement is an auto commit.
+	 * @param wasCorrected
+	 *            TODO: change description; Whether the replacement is an auto commit.
 	 */
 	// If the replacement is auto committed and we receive deletions afterwards
 	// we might want to restore the previous value for this word since the auto
@@ -187,7 +187,10 @@ public final class PredictionContextComposer {
 	// TODO: are auto- and non-auto-committed (= user-selected) the only options
 	// here?
 	// RENE: yes i think so. At least I can't think of anything else right now
-	public void setCurrentWord(final CharSequence word, boolean isAutoCommited) {
+	public void setCurrentWord(final CharSequence word, boolean wasCorrected) {
+        mCurrentWord = new StringBuilder(word);
+        mActualCursorPosition = word.length();
+        mCursorPosition = Character.codePointCount(word, 0, mActualCursorPosition);
 	}
 
 	/**

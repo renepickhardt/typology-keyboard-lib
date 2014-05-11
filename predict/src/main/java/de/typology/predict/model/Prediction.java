@@ -1,5 +1,7 @@
 package de.typology.predict.model;
 
+import java.lang.CharSequence;
+
 /**
  * Holds the information about a prediction: -the actual prediction -its score
  * 
@@ -14,8 +16,8 @@ public final class Prediction implements CharSequence {
 	// TODO: why is the variable called name?
 	private final String name;
 
-	public Prediction(String name, int score) {
-		this.name = name;
+	public Prediction(CharSequence name, int score) {
+		this.name = name.toString();
 	}
 
 	// TODO: why is it called getText and not getName? why not

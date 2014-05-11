@@ -1,5 +1,6 @@
 package de.typology.predict;
 
+import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,40 +39,54 @@ public final class Predict implements PredictionConfigChangeListener {
 	public void closePredictionSources() {
 	}
 
-	// this method probably makes sense but with respect to our usecase
-	// the PredictionContextComposer should be used
-	// re-add this later
-	// /**
-	// * Computes predictions given the current word and its
-	// * predecessors
-	// *
-	// * @param currentWord The word that is currently typed
-	// * @param previousWords The predecessor words of the current word
-	// * @param correctCurrentWord Whether the the current word should be
-	// * corrected
-	// * @param callback the callback to call when the computation is done
-	// * @return The id of this prediction querry
-	// */
-	// public long getPredictions(CharSequence currentWord, CharSequence[]
-	// previousWords,
-	// boolean correctCurrentWord, OnPredictionsComputedCallback callback) {
-	// Prediction[] predictions = {new Prediction(currentWord, 0.0)};
-	// callback.onPredictionsComputed(Arrays.asList(predictions), 0);
-	// return 0;
-	// }
+    public enum PredictionMode {
+        /**
+         * Predictions with a different prefix than the given
+         * prefix are allowed.
+         */
+        CORRECT_CURRENT_WORD,
+        /**
+         * Predictions with a different prefix than the given
+         * prefix are not allowed.
+         */
+        DO_NOT_CORRECT_CURRENT_WORD
+        // batch input,...
+    }
 
-	public enum PredictionMode {
-		/**
-		 * Predictions with a different prefix than the given
-		 * prefix are allowed.
-		 */
-		CORRECT_CURRENT_WORD,
-		/**
-		 * Predictions with a different prefix than the given
-		 * prefix are not allowed.
-		 */
-		DO_NOT_CORRECT_CURRENT_WORD
-		// batch input,...
+//	this method probably makes sense but with respect to our usecase
+//	the PredictionContextComposer should be used
+//	re-add this later
+	/**
+	* Computes predictions given the current word and its
+	* predecessors
+	*
+	* @param currentWord The word that is currently typed
+	* @param previousWords The predecessor words of the current word
+	* @param correctCurrentWord Whether the the current word should be
+	* corrected
+	* @param callback the callback to call when the computation is done
+	* @return The id of this prediction querry
+	*/
+	public long getPredictions(List<CharSequence> words,
+            PredictionMode mode, OnPredictionsComputedCallback callback) {
+
+        List<Prediction> predictions = new ArrayList<Prediction>();
+
+        if (words.size() > 0) {
+//            Prediction typedWord = new Prediction(words.get(0), words.size());
+            //add it twice: the first word is the typed word and the second one the most likely word
+//            predictions.add(typedWord);
+
+            //TODO: change iteration direction, this is only due to hacked implementation
+            final int size = words.size();
+            for (int i = 0; i < size; i++) {
+                predictions.add(new Prediction(words.get(i), i));
+            }
+        }
+
+        callback.onPredictionsComputed(predictions, 0);
+
+        return 0;
 	}
 
 	/**
@@ -90,10 +105,14 @@ public final class Predict implements PredictionConfigChangeListener {
         List<Prediction> predictions = new ArrayList<Prediction>();
 
         String value = mComposer.getTypedWord().toString();
-        predictions.add(new Prediction(value, 10));
+        Prediction typedWord = new Prediction(value, 200);
+        //add it twice: the first word is the typed word and the second one the most likely word
+        predictions.add(typedWord);
+        predictions.add(typedWord);
 
-        for (String sugg : mComposer.getPrevWords()) {
-            predictions.add(new Prediction(sugg, 5));
+        List<String> prevs = mComposer.getPrevWords();
+        for (int i = prevs.size() - 1; i >= 0; i--) {
+            predictions.add(new Prediction(prevs.get(i), i));
         }
 
         callback.onPredictionsComputed(predictions, 0);

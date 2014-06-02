@@ -17,6 +17,6 @@ public interface PredictionProvider {
 	
 	public void end();
 	
-	public List<Prediction> getPredictions(final PredictionContext composer);
+	public List<Prediction> getPredictions(final PredictionContext context);
 
 }

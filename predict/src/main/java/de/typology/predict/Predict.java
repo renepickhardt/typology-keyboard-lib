@@ -3,9 +3,16 @@ package de.typology.predict;
 import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Handler;
 
 import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
 import de.typology.predict.model.Prediction;
+import de.typology.predict.model.PredictionContext;
+import de.typology.predict.network_predict.NetworkPredictionProvider;
 
 /**
  * The class for managing the prediction computation.
@@ -16,10 +23,11 @@ import de.typology.predict.model.Prediction;
 public final class Predict implements PredictionConfigChangeListener {
 
     private final PredictionContextComposer mComposer;
-
+    private final PredictionRequestHandler mHandler;
 
 	public Predict() {
         mComposer = new PredictionContextComposer();
+        mHandler = new PredictionRequestHandler();
 	}
 
 	/**
@@ -67,26 +75,31 @@ public final class Predict implements PredictionConfigChangeListener {
 	* @param callback the callback to call when the computation is done
 	* @return The id of this prediction querry
 	*/
-	public long getPredictions(List<CharSequence> words,
-            PredictionMode mode, OnPredictionsComputedCallback callback) {
+	public long getPredictions(final List<CharSequence> words,
+            final PredictionMode mode, final OnPredictionsComputedCallback callback) {
 
-        List<Prediction> predictions = new ArrayList<Prediction>();
+//        List<Prediction> predictions = new ArrayList<Prediction>();
+//
+//        if (words.size() > 0) {
+////            Prediction typedWord = new Prediction(words.get(0), words.size());
+//            //add it twice: the first word is the typed word and the second one the most likely word
+////            predictions.add(typedWord);
+//
+//            //TODO: change iteration direction, this is only due to hacked implementation
+//            final int size = words.size();
+//            for (int i = 0; i < size; i++) {
+//                predictions.add(new Prediction(words.get(i), i));
+//            }
+//        }
+//        callback.onPredictionsComputed(predictions, 0);
+//        return 0;
 
-        if (words.size() > 0) {
-//            Prediction typedWord = new Prediction(words.get(0), words.size());
-            //add it twice: the first word is the typed word and the second one the most likely word
-//            predictions.add(typedWord);
+        final CharSequence[] prevWords = words.toArray(new CharSequence[words.size()]);
+        final PredictionContext context = new PredictionContext(prevWords);
 
-            //TODO: change iteration direction, this is only due to hacked implementation
-            final int size = words.size();
-            for (int i = 0; i < size; i++) {
-                predictions.add(new Prediction(words.get(i), i));
-            }
-        }
+        return mHandler.getPredictions(context, mode, callback);
 
-        callback.onPredictionsComputed(predictions, 0);
-
-        return 0;
+//        return 0;
 	}
 
 	/**
@@ -151,5 +164,53 @@ public final class Predict implements PredictionConfigChangeListener {
 //            return false;
 //        }
 //    }
+
+    private static final class PredictionRequestHandler {
+
+        private static final int NUMBER_OF_THREADS = 2;
+
+        private long mIdCounter;
+        private final PredictionProvider mProvider;
+        private final ExecutorService mExecutor;
+
+        private PredictionRequestHandler() {
+            mIdCounter = 0;
+            mProvider = new NetworkPredictionProvider();
+            mExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+        }
+
+        private long getPredictions(final PredictionContext context,
+                PredictionMode mode, OnPredictionsComputedCallback callback) {
+            final long id = mIdCounter++;
+            final PredictionRequest request = new PredictionRequest(mProvider, id, context, callback);
+            mExecutor.submit(request);
+            return id;
+        }
+
+    }
+
+    private static final class PredictionRequest implements Callable {
+
+        private final PredictionProvider mProvider;
+        private final long mId;
+        private final PredictionContext mContext;
+        private final OnPredictionsComputedCallback mCallback;
+
+        private PredictionRequest(final PredictionProvider provider,
+                                  final long id, final PredictionContext context,
+                                  final OnPredictionsComputedCallback callback) {
+            this.mProvider = provider;
+            this.mId = id;
+            this.mContext = context;
+            this.mCallback = callback;
+        }
+
+        public Object call() {
+            final List<Prediction> predictions = mProvider.getPredictions(mContext);
+            mCallback.onPredictionsComputed(predictions, mId);
+            return null;
+        }
+
+    }
 
 }

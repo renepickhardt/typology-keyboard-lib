@@ -1,7 +1,10 @@
 package de.typology.predict;
 
+import android.util.Log;
+
 import java.lang.CharSequence;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -21,6 +24,8 @@ import de.typology.predict.network_predict.NetworkPredictionProvider;
  * 
  */
 public final class Predict implements PredictionConfigChangeListener {
+
+    private static final String TAG = "Predict";
 
     private final PredictionContextComposer mComposer;
     private final PredictionRequestHandler mHandler;
@@ -79,7 +84,6 @@ public final class Predict implements PredictionConfigChangeListener {
             final PredictionMode mode, final OnPredictionsComputedCallback callback) {
 
 //        List<Prediction> predictions = new ArrayList<Prediction>();
-//
 //        if (words.size() > 0) {
 ////            Prediction typedWord = new Prediction(words.get(0), words.size());
 //            //add it twice: the first word is the typed word and the second one the most likely word
@@ -96,6 +100,8 @@ public final class Predict implements PredictionConfigChangeListener {
 
         final CharSequence[] prevWords = words.toArray(new CharSequence[words.size()]);
         final PredictionContext context = new PredictionContext(prevWords);
+
+        Log.i(TAG, "getting predictions for " + Arrays.toString(prevWords));
 
         return mHandler.getPredictions(context, mode, callback);
 
@@ -182,33 +188,31 @@ public final class Predict implements PredictionConfigChangeListener {
         private long getPredictions(final PredictionContext context,
                 PredictionMode mode, OnPredictionsComputedCallback callback) {
             final long id = mIdCounter++;
-            final PredictionRequest request = new PredictionRequest(mProvider, id, context, callback);
+            final PredictionRequest request = new PredictionRequest(id, context, callback);
             mExecutor.submit(request);
             return id;
         }
 
-    }
+        private final class PredictionRequest implements Callable {
+            private final long mId;
+            private final PredictionContext mContext;
+            private final OnPredictionsComputedCallback mCallback;
 
-    private static final class PredictionRequest implements Callable {
+            private PredictionRequest(final long id, final PredictionContext context,
+                                      final OnPredictionsComputedCallback callback) {
+                this.mId = id;
+                this.mContext = context;
+                this.mCallback = callback;
+            }
 
-        private final PredictionProvider mProvider;
-        private final long mId;
-        private final PredictionContext mContext;
-        private final OnPredictionsComputedCallback mCallback;
+            @Override
+            public Object call() {
+                Log.i(TAG, "getting predictions (call)");
+                final List<Prediction> predictions = mProvider.getPredictions(mContext);
+                mCallback.onPredictionsComputed(predictions, mId);
+                return null;
+            }
 
-        private PredictionRequest(final PredictionProvider provider,
-                                  final long id, final PredictionContext context,
-                                  final OnPredictionsComputedCallback callback) {
-            this.mProvider = provider;
-            this.mId = id;
-            this.mContext = context;
-            this.mCallback = callback;
-        }
-
-        public Object call() {
-            final List<Prediction> predictions = mProvider.getPredictions(mContext);
-            mCallback.onPredictionsComputed(predictions, mId);
-            return null;
         }
 
     }

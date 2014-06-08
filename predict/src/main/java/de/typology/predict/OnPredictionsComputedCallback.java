@@ -11,8 +11,8 @@ public interface OnPredictionsComputedCallback {
 	 * 
 	 * @param predictions The list of computed predictions, ordered by
 	 * relevance
-	 * @param querryId The id of the prediction querry
+	 * @param queryId The id of the prediction querry
 	 */
 	public void onPredictionsComputed(final List<Prediction> predictions,
-			long querryId);
+			long queryId);
 }

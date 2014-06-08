@@ -31,15 +31,21 @@ public class NetworkPredictionProvider implements PredictionProvider{
     private static final String TAG = "NetworkPredictionProvider";
 
     private static final int FETCH_AMOUNT = 5;
-    private static final String IP_ADDRESS = "91.50.53.80";
+    private static final String IP_ADDRESS = "192.168.1.11:8080";
     private static final String REQUEST_ADDRESS =
-            "http://10.0.2.2:8080/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
+            "http://" + IP_ADDRESS + "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
 //private static final String REQUEST_ADDRESS =
 //        "http://google.com/suggest?term=%s&numItems=%d";
 
+    private final HttpClient mClient;
+
+    public NetworkPredictionProvider() {
+        mClient = new DefaultHttpClient();
+    }
+
     @Override
     public void start() {
-
+        Log.i(TAG, "started");
     }
 
     @Override
@@ -47,11 +53,19 @@ public class NetworkPredictionProvider implements PredictionProvider{
 
     }
 
+//    @Override
+//    public List<Prediction> getPredictions(PredictionContext context) {
+//        throw new NullPointerException();
+////        return null;
+//    }
+
     @Override
-    public List<Prediction> getPredictions(PredictionContext context) {
-        Log.d(TAG, "getting predictions");
+    public List<Prediction> getPredictions(final PredictionContext context) {
+        Log.i(TAG, "getting predictions");
+//        throw new NullPointerException();
+//        return null;
         final HttpResponse response = getServerPredictions(createLookupPrefix(context));
-        Log.d(TAG, "received response: " + response);
+        Log.i(TAG, "received response: " + response);
         return predictionsFromResponse(response, context.getWordAt(context.getNumberOfWords() - 1));
     }
 
@@ -68,14 +82,13 @@ public class NetworkPredictionProvider implements PredictionProvider{
         return prefix.toString();
     }
 
-    private static HttpResponse getServerPredictions(String prefix) {
+    private HttpResponse getServerPredictions(String prefix) {
         HttpResponse response = null;
         try {
-            final HttpClient client = new DefaultHttpClient();
             final HttpGet request = new HttpGet();
             request.setURI(new URI(String.format(REQUEST_ADDRESS, prefix, FETCH_AMOUNT)));
             Log.d(TAG, "making request: " + request.getURI());
-            response = client.execute(request);
+            response = mClient.execute(request);
             Log.d(TAG, "got response");
         } catch (URISyntaxException e) {
             //TODO: better exception handling
@@ -91,12 +104,16 @@ public class NetworkPredictionProvider implements PredictionProvider{
     private static List<Prediction> predictionsFromResponse(HttpResponse response,
                                                             String defaultPrediction) {
         final List<Prediction> predictions = new ArrayList<Prediction>();
+
+        predictions.add(new Prediction(defaultPrediction, 10));
+
         if (response == null)
             return predictions;
 
+        Reader reader = null;
         try {
             final InputStream responseContent = response.getEntity().getContent();
-            final Reader reader = new InputStreamReader(responseContent);
+            reader = new InputStreamReader(responseContent);
 
             final Gson gson = new Gson();
             final PredictionResponse convertedResponse =
@@ -106,11 +123,20 @@ public class NetworkPredictionProvider implements PredictionProvider{
             for (PredictionResponse.Suggestion sugg : convertedResponse.suggestionList) {
                 predictions.add(new Prediction(sugg.suggestion, score--));
             }
-            return predictions;
 
         } catch (IOException e) {
             Log.e(TAG, "Error converting predictions: " + e.getMessage());
+        } finally {
+            try {
+                if (reader != null)
+                    reader.close();
+            } catch (IOException e) {
+                Log.e(TAG, "Error closing reader: " + e.getMessage());
+            }
+
         }
+
+        Log.i(TAG, "got predictions: " + predictions);
         return predictions;
     }
 

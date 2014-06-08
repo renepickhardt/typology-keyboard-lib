@@ -1,6 +1,8 @@
 package de.typology.predict;
 
+import android.content.Context;
 import android.util.Log;
+import android.os.Handler;
 
 import java.lang.CharSequence;
 import java.util.ArrayList;
@@ -10,7 +12,6 @@ import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Handler;
 
 import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
 import de.typology.predict.model.Prediction;
@@ -27,10 +28,14 @@ public final class Predict implements PredictionConfigChangeListener {
 
     private static final String TAG = "Predict";
 
+    //TODO: get rid of this later because it makes the code dependent of Android
+    private final android.content.Context mContext;
+
     private final PredictionContextComposer mComposer;
     private final PredictionRequestHandler mHandler;
 
-	public Predict() {
+	public Predict(final Context context) {
+        this.mContext = context;
         mComposer = new PredictionContextComposer();
         mHandler = new PredictionRequestHandler();
 	}
@@ -171,18 +176,20 @@ public final class Predict implements PredictionConfigChangeListener {
 //        }
 //    }
 
-    private static final class PredictionRequestHandler {
+    private final class PredictionRequestHandler {
 
-        private static final int NUMBER_OF_THREADS = 2;
+        private static final int NUMBER_OF_THREADS = 1;
 
         private long mIdCounter;
         private final PredictionProvider mProvider;
         private final ExecutorService mExecutor;
+        private final Handler mUiThreadHandler;
 
         private PredictionRequestHandler() {
             mIdCounter = 0;
             mProvider = new NetworkPredictionProvider();
             mExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+            mUiThreadHandler = new Handler(mContext.getMainLooper());
         }
 
         private long getPredictions(final PredictionContext context,
@@ -193,7 +200,7 @@ public final class Predict implements PredictionConfigChangeListener {
             return id;
         }
 
-        private final class PredictionRequest implements Callable {
+        private final class PredictionRequest implements Callable<List<Prediction>> {
             private final long mId;
             private final PredictionContext mContext;
             private final OnPredictionsComputedCallback mCallback;
@@ -206,10 +213,18 @@ public final class Predict implements PredictionConfigChangeListener {
             }
 
             @Override
-            public Object call() {
+            public List<Prediction> call() {
                 Log.i(TAG, "getting predictions (call)");
                 final List<Prediction> predictions = mProvider.getPredictions(mContext);
-                mCallback.onPredictionsComputed(predictions, mId);
+
+                //TODO: find another way to get back to the calling thread that doesn't depend
+                //on Android
+                mUiThreadHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCallback.onPredictionsComputed(predictions, mId);
+                    }
+                });
                 return null;
             }
 

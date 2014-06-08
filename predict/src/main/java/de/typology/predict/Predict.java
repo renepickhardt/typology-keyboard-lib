@@ -1,14 +1,15 @@
 package de.typology.predict;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.os.Handler;
+import android.widget.Toast;
 
 import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -16,6 +17,7 @@ import java.util.concurrent.Executors;
 import de.typology.predict.PredictionConfig.PredictionConfigChangeListener;
 import de.typology.predict.model.Prediction;
 import de.typology.predict.model.PredictionContext;
+import de.typology.predict.network_predict.IPAddressManager;
 import de.typology.predict.network_predict.NetworkPredictionProvider;
 
 /**
@@ -28,6 +30,8 @@ public final class Predict implements PredictionConfigChangeListener {
 
     private static final String TAG = "Predict";
 
+    private static final String IP_CONFIG_HOTWORD = "nacktmull";
+
     //TODO: get rid of this later because it makes the code dependent of Android
     private final android.content.Context mContext;
 
@@ -37,7 +41,7 @@ public final class Predict implements PredictionConfigChangeListener {
 	public Predict(final Context context) {
         this.mContext = context;
         mComposer = new PredictionContextComposer();
-        mHandler = new PredictionRequestHandler();
+        mHandler = new PredictionRequestHandler(IPAddressManager.getIpAddress(mContext));
 	}
 
 	/**
@@ -102,6 +106,18 @@ public final class Predict implements PredictionConfigChangeListener {
 //        }
 //        callback.onPredictionsComputed(predictions, 0);
 //        return 0;
+
+        if (words.size() > 0 && words.get(words.size() - 1).toString().
+                toLowerCase().equals(IP_CONFIG_HOTWORD)) {
+
+            final String ipAddress = IPAddressManager.getIpAddress(mContext);
+            ((NetworkPredictionProvider) mHandler.getProvider()).setIpAddress(ipAddress);
+
+            final Toast toast = Toast.makeText(mContext, "Changed the server address to " +
+                    ipAddress, Toast.LENGTH_LONG);
+            toast.show();
+//            Log.i(TAG, "found hotword");
+        }
 
         final CharSequence[] prevWords = words.toArray(new CharSequence[words.size()]);
         final PredictionContext context = new PredictionContext(prevWords);
@@ -185,9 +201,9 @@ public final class Predict implements PredictionConfigChangeListener {
         private final ExecutorService mExecutor;
         private final Handler mUiThreadHandler;
 
-        private PredictionRequestHandler() {
+        private PredictionRequestHandler(String ipAddress) {
             mIdCounter = 0;
-            mProvider = new NetworkPredictionProvider();
+            mProvider = new NetworkPredictionProvider(ipAddress);
             mExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
             mUiThreadHandler = new Handler(mContext.getMainLooper());
         }
@@ -198,6 +214,11 @@ public final class Predict implements PredictionConfigChangeListener {
             final PredictionRequest request = new PredictionRequest(id, context, callback);
             mExecutor.submit(request);
             return id;
+        }
+
+        @Deprecated
+        private PredictionProvider getProvider() {
+            return mProvider;
         }
 
         private final class PredictionRequest implements Callable<List<Prediction>> {

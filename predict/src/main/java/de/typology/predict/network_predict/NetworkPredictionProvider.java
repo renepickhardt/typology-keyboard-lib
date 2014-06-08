@@ -31,15 +31,18 @@ public class NetworkPredictionProvider implements PredictionProvider{
     private static final String TAG = "NetworkPredictionProvider";
 
     private static final int FETCH_AMOUNT = 5;
-    private static final String IP_ADDRESS = "192.168.1.11:8080";
-    private static final String REQUEST_ADDRESS =
-            "http://" + IP_ADDRESS + "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
-//private static final String REQUEST_ADDRESS =
-//        "http://google.com/suggest?term=%s&numItems=%d";
+//    private static final String IP_ADDRESS = "192.168.1.11:8080";
+//    private static final String REQUEST_ADDRESS =
+//            "http://" + IP_ADDRESS + "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
+    private static final String REQUEST_ADDRESS_PREFIX = "http://";
+    private static final String REQUEST_ADDRESS_POSTFIX =
+            "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
 
     private final HttpClient mClient;
+    private String mIpAddress;
 
-    public NetworkPredictionProvider() {
+    public NetworkPredictionProvider(String ipAddress) {
+        mIpAddress = ipAddress;
         mClient = new DefaultHttpClient();
     }
 
@@ -51,6 +54,10 @@ public class NetworkPredictionProvider implements PredictionProvider{
     @Override
     public void end() {
 
+    }
+
+    public void setIpAddress(final String ipAddress) {
+        mIpAddress = ipAddress;
     }
 
 //    @Override
@@ -86,7 +93,8 @@ public class NetworkPredictionProvider implements PredictionProvider{
         HttpResponse response = null;
         try {
             final HttpGet request = new HttpGet();
-            request.setURI(new URI(String.format(REQUEST_ADDRESS, prefix, FETCH_AMOUNT)));
+            request.setURI(new URI(String.format(REQUEST_ADDRESS_PREFIX + mIpAddress +
+                    REQUEST_ADDRESS_POSTFIX, prefix, FETCH_AMOUNT)));
             Log.d(TAG, "making request: " + request.getURI());
             response = mClient.execute(request);
             Log.d(TAG, "got response");

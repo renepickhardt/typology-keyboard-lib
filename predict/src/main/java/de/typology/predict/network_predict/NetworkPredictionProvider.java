@@ -32,7 +32,8 @@ public class NetworkPredictionProvider implements PredictionProvider{
 
     private static final String TAG = "NetworkPredictionProvider";
 
-    private static final int FETCH_AMOUNT = 2;
+    private static final int FETCH_AMOUNT = 7;
+    private static final int PREFIX_LENGTH = 2;
 //    private static final String IP_ADDRESS = "192.168.1.11:8080";
 //    private static final String REQUEST_ADDRESS =
 //            "http://" + IP_ADDRESS + "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
@@ -75,19 +76,19 @@ private static final String ENCODING = "UTF-8";
         final String lookupPrefix = createLookupPrefix(context);
         final HttpResponse response = getServerPredictions(lookupPrefix);
 
-        Log.i(TAG, "received response: " + response);
+//        Log.i(TAG, "received response: " + response);
 
         final String currentWordPrefix = context.getWordAt(context.getNumberOfWords() - 1);
-        return predictionsFromResponse(response, currentWordPrefix, lookupPrefix);
+        List<Prediction> predictions = predictionsFromResponse(response, currentWordPrefix, lookupPrefix);
+        if (predictions.size() == 0)
+            predictions.add(new Prediction(currentWordPrefix, 10));
+        return predictions;
     }
 
-
-
     private static String createLookupPrefix(PredictionContext context) {
-        final int prefixLength = FETCH_AMOUNT;
         final StringBuilder prefix = new StringBuilder();
         final int contextSize = context.getNumberOfWords();
-        for (int i = (contextSize > prefixLength) ? contextSize - prefixLength : 0;
+        for (int i = (contextSize > PREFIX_LENGTH) ? contextSize - PREFIX_LENGTH : 0;
              i < contextSize; i++) {
             prefix.append(context.getWordAt(i) + URL_WORD_SEPARATOR);
         }
@@ -102,14 +103,14 @@ private static final String ENCODING = "UTF-8";
             final HttpClient client = new DefaultHttpClient();
             final HttpGet request = new HttpGet();
 
-            Log.i(TAG, "the prefix is: " + prefix);
+//            Log.i(TAG, "the prefix is: " + prefix);
 
             final String url = String.format(REQUEST_ADDRESS_PREFIX + mIpAddress +
                     REQUEST_ADDRESS_POSTFIX, URLEncoder.encode(prefix, ENCODING), FETCH_AMOUNT);
             request.setURI(new URI(url));
 //            request.setURI(new URI("http://localhost:8080/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=foo b&numItems=5&index=generalIndex"));
             
-            Log.i(TAG, "making request: " + request.getURI());
+//            Log.i(TAG, "making request: " + request.getURI());
 
             response = client.execute(request);
             Log.i(TAG, "got response");
@@ -129,8 +130,6 @@ private static final String ENCODING = "UTF-8";
                                                             final String completePrefix) {
         final List<Prediction> predictions = new ArrayList<Prediction>();
 
-        predictions.add(new Prediction(currentWordPrefix, 10));
-
         if (response == null)
             return predictions;
 
@@ -144,10 +143,13 @@ private static final String ENCODING = "UTF-8";
                     gson.fromJson(reader, PredictionResponse.class);
 
             final int startCopyIndex = getStartingPrefixLength(completePrefix, currentWordPrefix);
-
             int score = convertedResponse.suggestionList.length;
+            predictions.add(new Prediction(currentWordPrefix, score + 1));
+
             for (PredictionResponse.Suggestion sugg : convertedResponse.suggestionList) {
-                predictions.add(new Prediction(sugg.suggestion.substring(startCopyIndex), score--));
+                final String suggText = sugg.suggestion.substring(startCopyIndex);
+                if (!suggText.equals(currentWordPrefix))
+                    predictions.add(new Prediction(suggText, score--));
             }
 
         } catch (IOException e) {
@@ -162,7 +164,7 @@ private static final String ENCODING = "UTF-8";
 
         }
 
-        Log.i(TAG, "got predictions: " + predictions);
+//        Log.i(TAG, "got predictions: " + predictions);
         return predictions;
     }
 

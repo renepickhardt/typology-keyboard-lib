@@ -123,7 +123,7 @@ public final class Predict implements PredictionConfigChangeListener {
         final CharSequence[] prevWords = words;
         final PredictionContext context = new PredictionContext(prevWords);
 
-        Log.i(TAG, "getting predictions for " + Arrays.toString(prevWords));
+//        Log.i(TAG, "getting predictions for " + Arrays.toString(prevWords));
 
         return mHandler.getPredictions(context, mode, callback);
 
@@ -236,7 +236,7 @@ public final class Predict implements PredictionConfigChangeListener {
 
             @Override
             public List<Prediction> call() {
-                Log.i(TAG, "getting predictions (call)");
+//                Log.i(TAG, "getting predictions (call)");
                 final List<Prediction> predictions = mProvider.getPredictions(mContext);
 
                 //TODO: find another way to get back to the calling thread that doesn't depend

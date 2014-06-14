@@ -89,7 +89,7 @@ public final class Predict implements PredictionConfigChangeListener {
 	* @param callback the callback to call when the computation is done
 	* @return The id of this prediction querry
 	*/
-	public long getPredictions(final List<CharSequence> words,
+	public long getPredictions(final String[] words,
             final PredictionMode mode, final OnPredictionsComputedCallback callback) {
 
 //        List<Prediction> predictions = new ArrayList<Prediction>();
@@ -107,7 +107,7 @@ public final class Predict implements PredictionConfigChangeListener {
 //        callback.onPredictionsComputed(predictions, 0);
 //        return 0;
 
-        if (words.size() > 0 && words.get(words.size() - 1).toString().
+        if (words.length > 0 && words[words.length - 1].
                 toLowerCase().equals(IP_CONFIG_HOTWORD)) {
 
             final String ipAddress = IPAddressManager.getIpAddress(mContext);
@@ -119,7 +119,8 @@ public final class Predict implements PredictionConfigChangeListener {
 //            Log.i(TAG, "found hotword");
         }
 
-        final CharSequence[] prevWords = words.toArray(new CharSequence[words.size()]);
+//        final CharSequence[] prevWords = words.toArray(new CharSequence[words.size()]);
+        final CharSequence[] prevWords = words;
         final PredictionContext context = new PredictionContext(prevWords);
 
         Log.i(TAG, "getting predictions for " + Arrays.toString(prevWords));

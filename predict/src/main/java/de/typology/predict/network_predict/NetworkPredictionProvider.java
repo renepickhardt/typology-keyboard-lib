@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,20 +32,20 @@ public class NetworkPredictionProvider implements PredictionProvider{
 
     private static final String TAG = "NetworkPredictionProvider";
 
-    private static final int FETCH_AMOUNT = 5;
+    private static final int FETCH_AMOUNT = 2;
 //    private static final String IP_ADDRESS = "192.168.1.11:8080";
 //    private static final String REQUEST_ADDRESS =
 //            "http://" + IP_ADDRESS + "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
     private static final String REQUEST_ADDRESS_PREFIX = "http://";
     private static final String REQUEST_ADDRESS_POSTFIX =
             "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
+    private static final String URL_WORD_SEPARATOR = " ";
+private static final String ENCODING = "UTF-8";
 
-    private final HttpClient mClient;
     private String mIpAddress;
 
     public NetworkPredictionProvider(String ipAddress) {
         mIpAddress = ipAddress;
-        mClient = new DefaultHttpClient();
     }
 
     @Override
@@ -58,6 +60,8 @@ public class NetworkPredictionProvider implements PredictionProvider{
 
     public void setIpAddress(final String ipAddress) {
         mIpAddress = ipAddress;
+        //TODO: use ipAddress
+        mIpAddress = "192.168.1.11:8080";
     }
 
 //    @Override
@@ -68,21 +72,24 @@ public class NetworkPredictionProvider implements PredictionProvider{
 
     @Override
     public List<Prediction> getPredictions(final PredictionContext context) {
-        Log.i(TAG, "getting predictions");
-//        throw new NullPointerException();
-//        return null;
-        final HttpResponse response = getServerPredictions(createLookupPrefix(context));
+        final String lookupPrefix = createLookupPrefix(context);
+        final HttpResponse response = getServerPredictions(lookupPrefix);
+
         Log.i(TAG, "received response: " + response);
-        return predictionsFromResponse(response, context.getWordAt(context.getNumberOfWords() - 1));
+
+        final String currentWordPrefix = context.getWordAt(context.getNumberOfWords() - 1);
+        return predictionsFromResponse(response, currentWordPrefix, lookupPrefix);
     }
 
+
+
     private static String createLookupPrefix(PredictionContext context) {
-        final int prefixLength = 2;
+        final int prefixLength = FETCH_AMOUNT;
         final StringBuilder prefix = new StringBuilder();
         final int contextSize = context.getNumberOfWords();
         for (int i = (contextSize > prefixLength) ? contextSize - prefixLength : 0;
              i < contextSize; i++) {
-            prefix.append(context.getWordAt(i) + " ");
+            prefix.append(context.getWordAt(i) + URL_WORD_SEPARATOR);
         }
         if (prefix.length() > 0)
             prefix.deleteCharAt(prefix.length() - 1);
@@ -92,12 +99,20 @@ public class NetworkPredictionProvider implements PredictionProvider{
     private HttpResponse getServerPredictions(String prefix) {
         HttpResponse response = null;
         try {
+            final HttpClient client = new DefaultHttpClient();
             final HttpGet request = new HttpGet();
-            request.setURI(new URI(String.format(REQUEST_ADDRESS_PREFIX + mIpAddress +
-                    REQUEST_ADDRESS_POSTFIX, prefix, FETCH_AMOUNT)));
-            Log.d(TAG, "making request: " + request.getURI());
-            response = mClient.execute(request);
-            Log.d(TAG, "got response");
+
+            Log.i(TAG, "the prefix is: " + prefix);
+
+            final String url = String.format(REQUEST_ADDRESS_PREFIX + mIpAddress +
+                    REQUEST_ADDRESS_POSTFIX, URLEncoder.encode(prefix, ENCODING), FETCH_AMOUNT);
+            request.setURI(new URI(url));
+//            request.setURI(new URI("http://localhost:8080/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=foo b&numItems=5&index=generalIndex"));
+            
+            Log.i(TAG, "making request: " + request.getURI());
+
+            response = client.execute(request);
+            Log.i(TAG, "got response");
         } catch (URISyntaxException e) {
             //TODO: better exception handling
             Log.e(TAG, "error getting predictions from server: " + e.getMessage());
@@ -110,10 +125,11 @@ public class NetworkPredictionProvider implements PredictionProvider{
     }
 
     private static List<Prediction> predictionsFromResponse(HttpResponse response,
-                                                            String defaultPrediction) {
+                                                            final String currentWordPrefix,
+                                                            final String completePrefix) {
         final List<Prediction> predictions = new ArrayList<Prediction>();
 
-        predictions.add(new Prediction(defaultPrediction, 10));
+        predictions.add(new Prediction(currentWordPrefix, 10));
 
         if (response == null)
             return predictions;
@@ -127,9 +143,11 @@ public class NetworkPredictionProvider implements PredictionProvider{
             final PredictionResponse convertedResponse =
                     gson.fromJson(reader, PredictionResponse.class);
 
+            final int startCopyIndex = getStartingPrefixLength(completePrefix, currentWordPrefix);
+
             int score = convertedResponse.suggestionList.length;
             for (PredictionResponse.Suggestion sugg : convertedResponse.suggestionList) {
-                predictions.add(new Prediction(sugg.suggestion, score--));
+                predictions.add(new Prediction(sugg.suggestion.substring(startCopyIndex), score--));
             }
 
         } catch (IOException e) {
@@ -146,6 +164,16 @@ public class NetworkPredictionProvider implements PredictionProvider{
 
         Log.i(TAG, "got predictions: " + predictions);
         return predictions;
+    }
+
+    private static int getStartingPrefixLength(final String completePrefix,
+                                                final String currentWordPrefix) {
+        if (completePrefix.length() < currentWordPrefix.length()) {
+            Log.e(TAG, "The complete prefix is shorter than a part of it, there's something wrong here: "
+                + completePrefix + ", just the word: " + currentWordPrefix);
+            return 0;
+        }
+        return completePrefix.length() - currentWordPrefix.length();
     }
 
     private class PredictionResponse {

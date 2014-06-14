@@ -54,7 +54,7 @@ public class IPAddressManager {
             return DEFAULT_IP_ADDRESS;
         }
 
-        return text.toString();
+        return text.toString().trim();
     }
 
 //    private static final String ALERT_TITLE = "IP Config";

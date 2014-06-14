@@ -61,15 +61,7 @@ private static final String ENCODING = "UTF-8";
 
     public void setIpAddress(final String ipAddress) {
         mIpAddress = ipAddress;
-        //TODO: use ipAddress
-        mIpAddress = "192.168.1.11:8080";
     }
-
-//    @Override
-//    public List<Prediction> getPredictions(PredictionContext context) {
-//        throw new NullPointerException();
-////        return null;
-//    }
 
     @Override
     public List<Prediction> getPredictions(final PredictionContext context) {

@@ -1,22 +1,15 @@
 package de.typology.predict.network_predict;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.io.PrintWriter;
 
 /**
  * Created by till on 6/8/14.
@@ -34,6 +27,11 @@ public class IPAddressManager {
     public static String getIpAddress(final Context context) {
         final File file = new File(Environment.getExternalStorageDirectory(),
                 IP_ADDR_CONFIG_FILE_NAME);
+
+        if (!file.exists()) {
+            createFileWithDefaultSettings(file);
+            return DEFAULT_IP_ADDRESS;
+        }
 
         final StringBuilder text = new StringBuilder();
         try {
@@ -55,6 +53,16 @@ public class IPAddressManager {
         }
 
         return text.toString().trim();
+    }
+
+    private static void createFileWithDefaultSettings(final File file) {
+        try {
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
+            writer.println(DEFAULT_IP_ADDRESS);
+            writer.close();
+        } catch (IOException e) {
+            Log.e(TAG, "Error creating default ip-config file: " + e.getMessage());
+        }
     }
 
 //    private static final String ALERT_TITLE = "IP Config";

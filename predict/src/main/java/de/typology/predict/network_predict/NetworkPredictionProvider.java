@@ -33,7 +33,7 @@ public class NetworkPredictionProvider implements PredictionProvider{
     private static final String TAG = "NetworkPredictionProvider";
 
     private static final int FETCH_AMOUNT = 7;
-    private static final int PREFIX_LENGTH = 2;
+    private static final int PREFIX_LENGTH = 5;
 //    private static final String IP_ADDRESS = "192.168.1.11:8080";
 //    private static final String REQUEST_ADDRESS =
 //            "http://" + IP_ADDRESS + "/autocompleteServer-0.0.1-SNAPSHOT/suggest?term=%s&numItems=%d";
@@ -105,7 +105,6 @@ private static final String ENCODING = "UTF-8";
 //            Log.i(TAG, "making request: " + request.getURI());
 
             response = client.execute(request);
-            Log.i(TAG, "got response");
         } catch (URISyntaxException e) {
             //TODO: better exception handling
             Log.e(TAG, "error getting predictions from server: " + e.getMessage());

@@ -30,7 +30,7 @@ public final class Predict implements PredictionConfigChangeListener {
 
     private static final String TAG = "Predict";
 
-    private static final String IP_CONFIG_HOTWORD = "nacktmull";
+    private static final String IP_CONFIG_HOTWORD = "wombat";
 
     //TODO: get rid of this later because it makes the code dependent of Android
     private final android.content.Context mContext;
